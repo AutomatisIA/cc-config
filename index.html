@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide Claude Code - Configuration Philippe Cohen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070c18; --surface: #0f172a; --surface2: #1e293b; --border: #334155;
+      --accent: #0EA5E9; --accent2: #7c3aed; --text: #e2e8f0; --muted: #64748b; --success: #10b981;
+      --warn: #f59e0b; --danger: #ef4444; --header-h: 64px; --side-w: 220px;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --border: #e2e8f0;
+      --accent: #0284C7; --accent2: #7c3aed; --text: #0f172a; --muted: #64748b; --success: #059669;
+    }
+    @media (prefers-color-scheme: light) {
+      [data-theme="system"] {
+        --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --border: #e2e8f0;
+        --accent: #0284C7; --accent2: #7c3aed; --text: #0f172a; --muted: #64748b; --success: #059669;
+      }
+    }
+    * { box-sizing: border-box; transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg); color: var(--text); overflow: hidden;
+      transition: background-color 200ms ease, color 200ms ease;
+    }
+    button, input { font: inherit; }
+    .topbar {
+      position: fixed; inset: 0 0 auto 0; height: var(--header-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 22px; background: color-mix(in srgb, var(--surface) 92%, transparent); border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px); z-index: 20; transition: background-color 200ms ease, border-color 200ms ease;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .brand h1 { margin: 0; font-size: 16px; letter-spacing: 0; }
+    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+    .theme-switch { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+    .theme-btn { border: 0; background: transparent; color: var(--muted); border-radius: 6px; padding: 7px 9px; cursor: pointer; min-width: 38px; }
+    .theme-btn.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .sidebar {
+      position: fixed; left: 0; top: var(--header-h); bottom: 0; width: var(--side-w); overflow-y: auto;
+      background: var(--surface); border-right: 1px solid var(--border); padding: 14px 10px; transition: background-color 200ms ease, border-color 200ms ease;
+    }
+    .nav-item, .memory-head {
+      width: 100%; display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 9px;
+      border: 1px solid transparent; border-radius: 8px; color: var(--text); cursor: pointer; background: transparent; text-align: left;
+    }
+    .nav-item:hover, .memory-head:hover { background: var(--surface2); }
+    .nav-item.active { border-color: color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    .nav-icon { width: 21px; text-align: center; flex: 0 0 auto; }
+    .nav-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 650; }
+    .nav-count { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .chev { color: var(--muted); transition: transform 200ms ease; }
+    .memory-group.open .chev { transform: rotate(90deg); }
+    .memory-children { display: none; margin-left: 18px; padding-left: 8px; border-left: 1px solid var(--border); }
+    .memory-group.open .memory-children { display: block; }
+    .side-progress { border-top: 1px solid var(--border); margin-top: 14px; padding: 16px 9px 8px; }
+    .progress-track { height: 8px; border-radius: 999px; background: var(--surface2); overflow: hidden; border: 1px solid var(--border); }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 200ms ease; }
+    .progress-label { margin-top: 9px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .content {
+      position: fixed; left: var(--side-w); right: 0; top: var(--header-h); bottom: 0; overflow-y: auto;
+      padding: 26px clamp(18px, 4vw, 54px) 54px; scroll-behavior: smooth;
+    }
+    .module-panel { display: none; max-width: 980px; margin: 0 auto; }
+    .module-panel.active { display: block; }
+    .module-hero { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: end; margin-bottom: 22px; }
+    .module-kicker { color: var(--accent); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .module-title { margin: 8px 0 8px; font-size: clamp(30px, 5vw, 52px); letter-spacing: 0; line-height: 1; }
+    .module-desc { margin: 0; color: var(--muted); line-height: 1.6; max-width: 740px; }
+    .module-meter { min-width: 120px; padding: 14px; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; text-align: center; }
+    .module-meter strong { display: block; font-size: 24px; }
+    .steps { display: grid; gap: 12px; }
+    .step { border: 1px solid var(--border); border-radius: 8px; background: var(--surface); overflow: hidden; transition: opacity 200ms ease, background-color 200ms ease, border-color 200ms ease; }
+    .step.locked { opacity: .35; pointer-events: none; }
+    .step.done { background: color-mix(in srgb, var(--success) 12%, var(--surface)); border-color: color-mix(in srgb, var(--success) 45%, var(--border)); }
+    .step-hdr { min-height: 54px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .step-chk { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); flex: 0 0 auto; display: grid; place-items: center; background: var(--surface2); }
+    .step.done .step-chk { background: var(--success); border-color: var(--success); color: #fff; }
+    .step.done .step-chk::after { content: "✓"; font-weight: 900; font-size: 14px; }
+    .step-title { flex: 1; font-weight: 750; line-height: 1.3; }
+    .step.done .step-title { text-decoration: line-through; color: color-mix(in srgb, var(--text) 55%, var(--muted)); }
+    .step-badge { display: none; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 850; letter-spacing: .05em; }
+    .step.expanded:not(.done) .step-badge { display: inline-flex; }
+    .step-body { display: none; border-top: 1px solid var(--border); padding: 14px; }
+    .step.expanded .step-body { display: block; }
+    .step.done:not(.expanded) .step-body { display: none; }
+    .tabs-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tab-btn { border: 1px solid var(--border); background: var(--surface2); color: var(--muted); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-weight: 700; font-size: 13px; }
+    .tab-btn.active { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .tab-pane { display: none; color: var(--text); line-height: 1.65; }
+    .tab-pane.visible { display: block; }
+    .tab-pane p { margin: 0 0 12px; }
+    .tab-pane ul { margin: 0 0 12px 18px; padding: 0; }
+    .tab-pane li { margin: 5px 0; }
+    .code-wrap { position: relative; margin: 10px 0 14px; }
+    .code-block, .prompt-text {
+      margin: 0; white-space: pre-wrap; word-break: break-word; overflow-x: auto;
+      background: #020617; color: #e2e8f0; border: 1px solid #1e293b; border-radius: 8px;
+      padding: 14px; font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .copy-btn, .copy-prompt-btn {
+      position: absolute; right: 9px; top: 9px; border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+      background: color-mix(in srgb, var(--accent) 18%, #020617); color: #e0f2fe; border-radius: 7px; padding: 6px 9px; cursor: pointer; font-size: 12px; font-weight: 800;
+    }
+    .copy-prompt-btn { position: static; margin-top: 10px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: 0; }
+    .claude-btn { margin: 18px 0 12px; border: 0; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; padding: 11px 14px; cursor: pointer; font-weight: 850; }
+    .prompt-panel { display: none; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 14px; margin-bottom: 20px; }
+    .prompt-panel.open { display: block; }
+    .prompt-note { margin: 0 0 10px; color: var(--muted); }
+    .tip { border-left: 3px solid var(--accent); background: var(--surface2); border-radius: 0 8px 8px 0; padding: 10px 12px; color: var(--text); margin: 12px 0; }
+    .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+    @media (max-width: 760px) {
+      body { overflow: auto; }
+      .topbar { position: sticky; }
+      .sidebar { position: sticky; top: var(--header-h); width: 100%; height: auto; max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--border); z-index: 15; }
+      .content { position: static; padding: 20px 14px 44px; }
+      .module-hero { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">CC</div>
+      <div>
+        <h1>Configuration Claude Code</h1>
+        <p>Guide interactif pour reproduire l'environnement de Philippe Cohen</p>
+      </div>
+    </div>
+    <div class="theme-switch" aria-label="Theme">
+      <button class="theme-btn" data-theme-choice="dark" title="Theme sombre">☾</button>
+      <button class="theme-btn" data-theme-choice="light" title="Theme clair">☼</button>
+      <button class="theme-btn" data-theme-choice="system" title="Theme systeme">SYS</button>
+    </div>
+  </header>
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="content" id="content"></main>
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <script>
+    const MODULES = [
+      { id: "base", icon: "⚙️", short: "Installation de base", title: "Installation de base", desc: "Installe les fondations macOS: Homebrew, outils CLI, Claude Code et Comet.", steps: [
+        { title: "Installer Homebrew", concept: ["Homebrew est le gestionnaire de paquets macOS standard.", "Il permet d'installer git, node, jq, tmux et RTK avec des commandes reproductibles."], commandes: ["/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""], verify: ["brew --version"] },
+        { title: "Installer les outils de base", concept: ["git gere le versioning, node fournit npm et l'ecosysteme JavaScript, jq parse le JSON des hooks, tmux organise les sessions multi-agents."], commandes: ["brew install git node jq tmux"], verify: ["git --version && node --version && jq --version && tmux -V"] },
+        { title: "Installer Claude Code CLI", concept: ["Le CLI officiel d'Anthropic lit sa configuration dans ~/.claude/.", "L'option --dangerously-skip-permissions sera isolee dans un wrapper dedie pour l'acces distant via Telegram."], commandes: ["npm install -g @anthropic-ai/claude-code"], verify: ["claude --version"] },
+        { title: "Installer Comet browser", concept: ["Comet est un navigateur Chromium modifie utilise comme base de l'automatisation browser avec dev-browser.", "Il exposera un port de debug local 9222 que le script comet-debug peut ouvrir automatiquement."], commandes: ["# Telecharge Comet depuis https://www.comet.so puis glisse Comet.app dans /Applications"], verify: ["ls /Applications/Comet.app && echo \"✓ Comet installe\""] }
+      ]},
+      { id: "rtk", icon: "🪙", short: "Tokens — RTK", title: "Gestion des tokens — RTK", desc: "Réduit les tokens consommés par les commandes shell de 60–90 % grâce à des variantes compactes transparentes. Inclut /advisor, le reviewer Opus indépendant qui valide les approches avant d'implémenter.", steps: [
+        { title: "Installer RTK", concept: ["RTK (Rust Token Killer) réécrit les commandes shell de Claude Code en variantes compactes.", "Résultat : 60-90% de tokens économisés sur git, ls, grep, npm. Transparent — aucune action manuelle pendant les sessions.", "Prérequis : jq doit être installé (brew install jq).", "Repo : https://github.com/PsychoLlama/rtk — installation via cargo ou Homebrew selon disponibilité."], commandes: ["# Via Homebrew (si disponible) :\nbrew install rtk\n\n# Ou via Cargo (Rust) :\ncargo install rtk\n\nrtk --version"], verify: ["rtk --version && which rtk && jq --version"] },
+        { title: "Installer le hook de reecriture", concept: ["Le hook PreToolUse lit la commande Bash demandee par Claude, appelle rtk rewrite, puis renvoie une entree corrigee a Claude Code.", "Les erreurs RTK sont non bloquantes: le workflow continue avec la commande originale."], commandes: ["mkdir -p ~/.claude/hooks", "pbpaste > ~/.claude/hooks/rtk-rewrite.sh", "chmod +x ~/.claude/hooks/rtk-rewrite.sh"], verify: ["~/.claude/hooks/rtk-rewrite.sh < /dev/null || true"], src: "src-rtk-rewrite" },
+        { title: "Declarer le hook dans settings.json", concept: ["Claude Code charge les hooks depuis ~/.claude/settings.json.", "Le matcher Bash limite cette reecriture aux commandes shell."], commandes: ["jq '.hooks.PreToolUse += [{\"matcher\":\"Bash\",\"hooks\":[{\"type\":\"command\",\"command\":\"$HOME/.claude/hooks/rtk-rewrite.sh\"}]}]' ~/.claude/settings.json > /tmp/cc-settings.json && mv /tmp/cc-settings.json ~/.claude/settings.json"], verify: ["jq '.hooks.PreToolUse' ~/.claude/settings.json"] },
+        { title: "/advisor — second regard Opus indépendant", concept: ["advisor() (ou /advisor dans le prompt Claude Code) invoque Claude Opus comme reviewer indépendant sur la session en cours.", "Il voit l'intégralité de la conversation : chaque outil appelé, chaque résultat, chaque décision prise — sans le biais du travail en cours.", "À invoquer AVANT de s'engager sur une approche complexe, AVANT de déclarer une tâche terminée, et quand on est bloqué depuis plus d'un échange.", "Lien direct avec les tokens : valider l'approche AVANT d'implémenter 300 lignes évite les refactorings coûteux. Un appel Opus économise souvent 10× plus qu'il ne consomme.", "Configuré automatiquement via advisorModel: 'opus' dans settings.json — installé dans le module Plugins. Aucune action supplémentaire."], commandes: ["# Dans Claude Code, à tout moment :\n# advisor()\n#\n# ou taper dans le prompt :\n# /advisor\n\n# Moments clés pour l'invoquer :\n# - Avant de choisir une architecture\n# - Avant de déclarer 'c'est terminé'\n# - Quand un bug résiste depuis 2+ échanges"], verify: ["jq '.advisorModel' ~/.claude/settings.json"] }
+      ]},
+      { id: "memory-md", icon: "🧠", short: "Fichiers .md", title: "Mémoire — Fichiers .md", desc: "Pose une mémoire lisible par humains. CLAUDE.md pour les règles comportementales courtes, MEMORY.md comme index chargé à la demande pour alléger le contexte.", steps: [
+        { title: "Creer la memoire globale", concept: ["~/.claude/CLAUDE.md contient les preferences valables dans tous les projets.", "Elle doit rester courte, concrete et orientee comportement.", "⚠️ La commande ci-dessous crée le fichier seulement s'il n'existe pas encore. Si tu en as déjà un, ajoute les lignes manuellement."], commandes: ["mkdir -p ~/.claude\n# Créer uniquement si absent (ne pas écraser)\n[ ! -f ~/.claude/CLAUDE.md ] && cat > ~/.claude/CLAUDE.md <<'EOF'\n# Preferences globales\n- Repondre en francais sauf demande contraire.\n- Lire le code avant de proposer une modification.\n- Preferer rg pour chercher et des patches scopes.\nEOF\n[ -f ~/.claude/CLAUDE.md ] && echo '✓ ~/.claude/CLAUDE.md existe' || echo '✗ erreur'"], verify: ["sed -n '1,20p' ~/.claude/CLAUDE.md"] },
+        { title: "Ajouter une memoire projet", concept: ["Un fichier CLAUDE.md a la racine d'un depot specialise les regles pour ce projet.", "Il prime sur les habitudes generales quand il documente une contrainte locale.", "Les commandes utilisent >> (append) — elles n'écrasent pas le contenu existant."], commandes: ["# Si CLAUDE.md n'existe pas encore dans ce projet :\n[ ! -f CLAUDE.md ] && printf '# Mémoire projet\\n' > CLAUDE.md\n\n# Ajouter les sections utiles (append — ne pas écraser) :\ncat >> CLAUDE.md <<'EOF'\n\n## Configuration\n- Commande de test : npm test\n- Style : conserver les composants existants.\n- Ne pas modifier les migrations sans demande explicite.\nEOF"], verify: ["test -f CLAUDE.md && sed -n '1,20p' CLAUDE.md"] },
+        { title: "Organiser les notes longues", concept: ["Les notes volumineuses restent dans Docs/ ou .claude/memories/ pour ne pas saturer CLAUDE.md.", "CLAUDE.md peut pointer vers ces fichiers quand ils sont utiles."], commandes: ["mkdir -p Docs .claude/memories", "printf '# Decisions\\n\\n- 2026-04-15: initialisation memoire.\\n' > .claude/memories/decisions.md"], verify: ["find .claude/memories -maxdepth 1 -type f -name '*.md' -print"] },
+        { title: "Stratégie de split CLAUDE.md / MEMORY.md", concept: ["Problème : si tout est dans CLAUDE.md, le contexte grossit à chaque session — même les informations non pertinentes pour la tâche en cours.", "Solution : CLAUDE.md contient UNIQUEMENT les règles comportementales actives (< 200 lignes). Les détails projet vont dans MEMORY.md, chargé à la demande via la directive @MEMORY.md.", "Règle de split : une règle comportementale → CLAUDE.md. Un fait projet, une credential, une décision architecturale, une note de déploiement → fichier lié dans MEMORY.md.", "Exemple : CLAUDE.md contient '- Répondre en français' et '@~/.claude/memory/MEMORY.md'. MEMORY.md contient l'index vers decisions.md, stack.md, credentials.md.", "Résultat : Claude ne charge que ce dont il a besoin. Le contexte reste léger même sur des projets documentés en profondeur."], commandes: ["# 1. Créer l'index MEMORY.md du projet\nPROJ=$(basename $PWD)\nMEM_DIR=~/.claude/projects/$PROJ/memory\nmkdir -p \"$MEM_DIR\"\ncat > \"$MEM_DIR/MEMORY.md\" <<'EOF'\n# Mémoire Projet — Index\n\n## Stack & Architecture\n- [Stack](stack.md)\n\n## Décisions\n- [Décisions](decisions.md)\n\n## Déploiement\n- [Déploiement](deployment.md)\nEOF\n\n# 2. Référencer MEMORY.md depuis CLAUDE.md global\ngrep -q 'MEMORY.md' ~/.claude/CLAUDE.md || \\\n  echo \"\\n# Mémoire projet active\\n@$MEM_DIR/MEMORY.md\" >> ~/.claude/CLAUDE.md\n\necho '✓ Split CLAUDE.md / MEMORY.md configuré'"], verify: ["grep 'MEMORY.md' ~/.claude/CLAUDE.md && echo '✓ référence OK' || echo '✗ référence manquante'"] }
+      ]},
+      { id: "memory-sqlite", icon: "🧠", short: "SQLite", title: "Mémoire — SQLite", desc: "Ajoute une memoire structuree locale pour decisions, snippets, preferences et recherches.", steps: [
+        { title: "Installer sqlite et creer le dossier", concept: ["SQLite donne une memoire locale robuste, rapide et sans serveur.", "Elle complete les fichiers Markdown pour les donnees interrogeables."], commandes: ["brew install sqlite", "mkdir -p ~/.claude/memory"], verify: ["sqlite3 --version && test -d ~/.claude/memory"] },
+        { title: "Initialiser le schema", concept: ["Une table memories simple suffit: type, cle, valeur, tags et dates.", "Le couple type/key evite les doublons accidentels."], commandes: ["sqlite3 ~/.claude/memory/philippe.db <<'SQL'\nCREATE TABLE IF NOT EXISTS memories (\n  id INTEGER PRIMARY KEY,\n  type TEXT NOT NULL,\n  key TEXT NOT NULL,\n  value TEXT NOT NULL,\n  tags TEXT DEFAULT '',\n  created_at TEXT DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE(type, key)\n);\nSQL"], verify: ["sqlite3 ~/.claude/memory/philippe.db '.schema memories'"] },
+        { title: "Ajouter des commandes utilitaires", concept: ["Un petit script cc-mem rend la memoire utilisable depuis Claude Code sans requetes manuelles."], commandes: ["cat > ~/.claude/cc-mem <<'EOF'\n#!/usr/bin/env bash\nDB=\"$HOME/.claude/memory/philippe.db\"\ncase \"$1\" in\n  add) sqlite3 \"$DB\" \"INSERT OR REPLACE INTO memories(type,key,value,tags,updated_at) VALUES('$2','$3','$4','${5:-}',CURRENT_TIMESTAMP);\" ;;\n  list) sqlite3 -header -column \"$DB\" \"SELECT type,key,tags,updated_at FROM memories ORDER BY updated_at DESC LIMIT 40;\" ;;\n  get) sqlite3 -line \"$DB\" \"SELECT * FROM memories WHERE key LIKE '%$2%' OR tags LIKE '%$2%';\" ;;\n  *) echo \"usage: cc-mem add type key value [tags] | list | get query\" ;;\nesac\nEOF\nchmod +x ~/.claude/cc-mem"], verify: ["~/.claude/cc-mem list"] },
+        { title: "Documenter l'usage pour Claude", concept: ["SQLite excelle pour les données atomiques : une préférence = une ligne, une décision = une ligne, un snippet = une ligne. Pas de paragraphes — des faits.", "Quand utiliser SQLite vs Markdown : SQLite pour les données interrogeables (recherche par mot-clé, filtrage par type, tri par date). Markdown pour la narration, les décisions argumentées, les guides.", "Claude doit consulter SQLite quand il cherche une préférence de style, une décision passée, un snippet réutilisable — AVANT de faire des hypothèses.", "Types utiles en pratique : 'pref' (préférences de style/comportement), 'decision' (choix architecturaux datés), 'snippet' (commandes fréquentes), 'credential' (références — jamais les valeurs), 'note' (observations de session)."], commandes: ["cat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## Mémoire SQLite (~/.claude/cc-mem)\nSQLite stocke des données atomiques interrogeables — une ligne = un fait précis.\n\nQuand consulter :\n- Avant toute décision de style ou d'architecture : ~/.claude/cc-mem get <mot-clé>\n- Pour lister les décisions récentes : ~/.claude/cc-mem list\n- En début de session sur un projet connu : ~/.claude/cc-mem get <nom-projet>\n\nTypes de données stockées :\n- pref : préférences (ex: type=pref key=lang value=français)\n- decision : choix datés (ex: type=decision key=orm value='Prisma — 2026-04')\n- snippet : commandes réutilisables\n- note : observations de session\n\nNe jamais stocker : mots de passe, tokens, clés API (utiliser les fichiers curated).\nEOF"], verify: ["grep -n \"Mémoire SQLite\" ~/.claude/CLAUDE.md"] }
+      ]},
+      { id: "memory-claudemem", icon: "🧠", short: "claude-mem", title: "Mémoire — claude-mem", desc: "Installe un workflow de memoire plus automatique pour capturer et retrouver les informations utiles.", steps: [
+        { title: "Installer claude-mem", concept: ["claude-mem automatise la capture de souvenirs developpeur et leur recherche.", "Il est utile pour les preferences frequentes, les decisions projet et les raccourcis."], commandes: ["npm install -g claude-mem"], verify: ["claude-mem --version || npx claude-mem --version"] },
+        { title: "Initialiser le stockage", concept: ["L'initialisation cree le dossier de donnees et la configuration locale.", "Garde ce stockage dans le home pour le partager entre projets."], commandes: ["claude-mem init --dir ~/.claude/claude-mem"], verify: ["test -d ~/.claude/claude-mem && find ~/.claude/claude-mem -maxdepth 2 -type f | head"] },
+        { title: "Ajouter des alias pratiques", concept: ["Des alias courts encouragent l'usage reel: memoriser, chercher, lister.", "Le but est de rendre la memoire plus rapide qu'une note manuelle."], commandes: ["cat >> ~/.zshrc <<'EOF'\nalias cm-add='claude-mem add'\nalias cm-find='claude-mem search'\nalias cm-list='claude-mem list'\nEOF"], verify: ["tail -n 5 ~/.zshrc"] },
+        { title: "Relier claude-mem a CLAUDE.md", concept: ["Claude doit utiliser claude-mem quand une information semble deja avoir ete decidee.", "La recherche memoire doit preceder les hypotheses sur les preferences personnelles."], commandes: ["cat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## claude-mem\n- Avant une decision de style ou d'architecture personnelle, chercher avec claude-mem search.\n- Ajouter les preferences stables avec claude-mem add.\nEOF"], verify: ["grep -n \"claude-mem\" ~/.claude/CLAUDE.md"] }
+      ]},
+      { id: "memory-coord", icon: "🧠", short: "Coordination mémoire", title: "Mémoire — Coordination des 3 briques", desc: "Directives précises pour que Claude orchestre les 3 briques de mémoire de façon optimale : quand lire quoi, quand écrire où, comment éviter les doublons.", steps: [
+        { title: "Vue d'ensemble : 3 briques complémentaires", concept: ["Brique 1 — Fichiers curatés (CLAUDE.md + MEMORY.md + fichiers liés) : source de vérité pour les règles comportementales, credentials, architecture, feedback corrections. Persistance longue. Édition manuelle ou par Claude.", "Brique 2 — SQLite (cc-mem) : données atomiques et interrogeables — préférences, décisions datées, snippets, notes de session. Requêtes par mot-clé, type ou date.", "Brique 3 — claude-mem (SQLite + ChromaDB) : capture automatique via hooks. Historique de sessions, observations, découvertes, corrections de bugs. Recherche sémantique.", "Règle de non-duplication : ne jamais stocker le même fait dans deux briques. Si c'est dans MEMORY.md, ne pas répliquer dans SQLite. Si c'est capturé par claude-mem, ne pas l'écrire manuellement."] },
+        { title: "Table de routage : quoi va où", concept: ["→ Stack, ports, URLs, credentials du projet → fichiers curatés (MEMORY.md → stack.md, credentials.md)", "→ Règles comportementales actives → CLAUDE.md (court, < 200 lignes)", "→ Préférence de style atomique → SQLite (cc-mem add pref <key> <valeur>)", "→ Décision architecturale avec date → SQLite (cc-mem add decision <key> <valeur>)", "→ 'Qu'avons-nous fait la dernière fois sur X ?' → claude-mem timeline", "→ 'Avons-nous déjà vu ce bug ?' → claude-mem search <symptôme>", "→ Historique de session, découvertes → automatique (claude-mem via hooks — ne rien faire)", "→ Credentials et tokens → fichiers curatés UNIQUEMENT (jamais dans claude-mem ni SQLite)"], commandes: ["# Tableau de routage à ajouter dans CLAUDE.md :\ncat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## Coordination mémoire — Table de routage\n| Besoin | Brique | Action |\n|---|---|---|\n| Stack, ports, URLs projet | Fichiers curatés | Lire MEMORY.md → fichier lié |\n| Règle comportementale | CLAUDE.md | Courte, concrète |\n| Préférence de style | SQLite | cc-mem get <mot> |\n| Décision datée | SQLite | cc-mem get <projet> |\n| 'Que s'est-il passé la dernière fois ?' | claude-mem | claude-mem timeline |\n| Bug déjà rencontré | claude-mem | claude-mem search <symptôme> |\n| Credentials/tokens | Fichiers curatés | Jamais ailleurs |\nEOF"], verify: ["grep -A8 'Table de routage' ~/.claude/CLAUDE.md"] },
+        { title: "Directives Claude : quand lire la mémoire", concept: ["Claude doit vérifier la mémoire AVANT de faire des hypothèses sur les préférences ou décisions passées.", "Ordre de lecture : (1) CLAUDE.md chargé au démarrage. (2) @MEMORY.md si référencé. (3) cc-mem get <mot> si une préférence semble manquer. (4) claude-mem search pour l'historique.", "Ne jamais consulter toutes les briques à chaque réponse — seulement quand une information semble pertinente et absente du contexte actuel.", "Signal pour consulter : phrase comme 'habituellement', 'comme avant', 'quelle est ta préférence', 'avons-nous déjà fait ça'."], commandes: ["cat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## Directives lecture mémoire\nAvant de formuler une hypothèse sur une préférence ou décision passée :\n1. Vérifier le contexte chargé (CLAUDE.md + @MEMORY.md)\n2. Si absent : cc-mem get <mot-clé>\n3. Si historique demandé : claude-mem search <terme> ou claude-mem timeline\nNe pas interroger toutes les briques systématiquement — seulement si manque détecté.\nEOF"], verify: ["grep -n 'Directives lecture' ~/.claude/CLAUDE.md"] },
+        { title: "Directives Claude : quand écrire en mémoire", concept: ["Claude écrit en mémoire sur demande explicite ('retiens que', 'note ça', 'remember') ou quand il détecte une correction de comportement (feedback).", "Mémoire curatée (fichiers) : user preferences, feedback corrections, architecture projet. Écrite avec Write/Edit — visible et auditable.", "SQLite : faits atomiques stables. Écrit avec cc-mem add — rapide, interrogeable.", "claude-mem : capturé automatiquement via hooks. Claude ne l'écrit jamais manuellement.", "Ne jamais dupliquer : si une info est déjà dans MEMORY.md, ne pas la réécrire dans SQLite."], commandes: ["# La capture claude-mem est automatique (hooks).\n# Pour écrire en SQLite manuellement :\n~/.claude/cc-mem add pref ui-style 'dark-first, glassmorphism'\n~/.claude/cc-mem add decision auth 'Supabase Auth — 2026-04'\n\n# Pour vérifier ce qui a été capturé :\n~/.claude/cc-mem list"], verify: ["~/.claude/cc-mem list | head -10"] }
+      ]},
+      { id: "plugins", icon: "🔌", short: "Plugins & Skills", title: "Plugins & Skills", desc: "Active les 7 plugins Claude Code via settings.json : superpowers, codex (marketplace GitHub custom), code-review, security-guidance, skill-creator, frontend-design, telegram.", steps: [
+        { title: "Activer les plugins dans settings.json", concept: ["Les plugins Claude Code s'activent via enabledPlugins dans ~/.claude/settings.json.", "Au premier lancement suivant, Claude Code les télécharge et installe automatiquement.", "Les 7 plugins : superpowers (skills, advisor, speckit), codex, code-review, security-guidance, skill-creator, frontend-design, telegram.", "⚠️ Les commandes ci-dessous fusionnent les clés dans settings.json existant — elles ne l'écrasent pas."], commandes: ["# Créer settings.json s'il n'existe pas encore\nmkdir -p ~/.claude\n[ ! -f ~/.claude/settings.json ] && echo '{}' > ~/.claude/settings.json\n\n# Fusionner les paramètres de base (préserve permissions, hooks, etc.)\nS=~/.claude/settings.json\njq '. * {\"model\":\"sonnet\",\"language\":\"français\",\"effortLevel\":\"high\",\"advisorModel\":\"opus\",\"autoDreamEnabled\":true,\"skipDangerousModePermissionPrompt\":true,\"voiceEnabled\":true}' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\"\n\n# Fusionner les plugins (préserve les plugins existants)\njq '.enabledPlugins = ((.enabledPlugins // {}) * {\"superpowers@claude-plugins-official\":true,\"codex@openai-codex\":true,\"code-review@claude-plugins-official\":true,\"security-guidance@claude-plugins-official\":true,\"skill-creator@claude-plugins-official\":true,\"frontend-design@claude-plugins-official\":true,\"telegram@claude-plugins-official\":true})' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\""], verify: ["jq '.enabledPlugins | keys' ~/.claude/settings.json"] },
+        { title: "Ajouter le marketplace Codex", concept: ["Le plugin codex vient du marketplace GitHub openai/codex-plugin-cc, pas du marketplace officiel Anthropic.", "La clé extraKnownMarketplaces déclare cette source externe — sans elle, codex@openai-codex est introuvable.", "Ce marketplace expose le plugin Codex CLI intégré à Claude Code."], commandes: ["# Ajouter uniquement la clé openai-codex (préserve les autres marketplaces éventuels)\njq '.extraKnownMarketplaces.\"openai-codex\" = {\"source\":{\"source\":\"github\",\"repo\":\"openai/codex-plugin-cc\"}}' ~/.claude/settings.json > /tmp/s.json && mv /tmp/s.json ~/.claude/settings.json"], verify: ["jq '.extraKnownMarketplaces' ~/.claude/settings.json"] },
+        { title: "Premier lancement — installation des plugins", concept: ["Au premier claude, tous les plugins déclarés s'installent dans ~/.claude/plugins/cache/.", "L'installation prend 1-2 min. Quitter avec /exit une fois terminé.", "Les plugins injectent automatiquement des hooks : Codex stop-gate (revue à chaque fin de session), security-guidance (alerte avant Edit/Write risqué), superpowers SessionStart (chargement mémoire)."], commandes: ["claude"], verify: ["ls ~/.claude/plugins/cache/ 2>/dev/null | head -10"] },
+        { title: "Vérifier les hooks auto-injectés", concept: ["3 hooks sont actifs automatiquement après installation des plugins (zéro config manuelle) :", "• Codex stop-gate (Stop event, 900s) : Codex passe en revue les fichiers modifiés avant de clore la session.", "• security-guidance (PreToolUse Edit/Write) : avertit si le code contient une vulnérabilité potentielle.", "• superpowers SessionStart : charge les fichiers mémoire du projet au démarrage."], commandes: ["ls ~/.claude/plugins/cache/ | head -20"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/"] }
+      ]},
+      { id: "workflow", icon: "⚡", short: "Workflow de dév.", title: "Workflow de développement", desc: "superpowers est le système de skills invoqué en premier. Son mode plan est remplacé par speckit (specify→clarify→plan→tasks→analyze→implement). TDD, 4 quality gates, et /advisor pour valider.", steps: [
+        { title: "Installer superpowers et speckit (GitHub)", concept: ["superpowers est le plugin qui charge le système de skills à chaque session (SessionStart hook automatique).", "Il est installé via le module Plugins (enabledPlugins dans settings.json). Mais speckit est un skill séparé qui doit être configuré.", "speckit-constitution et superpowers-speckit viennent du même marketplace GitHub : claude-plugins-official.", "IMPORTANT : dans CLAUDE.md, il faut déclarer explicitement que superpowers-speckit remplace le mode plan natif de superpowers — sinon Claude utilisera l'ancien workflow brainstorming+planning."], commandes: ["# superpowers est installé via le module Plugins (settings.json enabledPlugins).\n# Vérifier qu'il est bien présent :\nls ~/.claude/plugins/cache/claude-plugins-official/superpowers/\n\n# Vérifier que speckit est accessible (skill dans superpowers) :\nls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep speckit\n\n# Si manquant, relancer claude pour forcer la réinstallation des plugins :\nclaude --version"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -i speckit && echo '✓ speckit OK' || echo '✗ speckit manquant — relancer claude'"] },
+        { title: "Le cycle complet : superpowers d'abord, speckit remplace plan", concept: ["Principe : superpowers est invoqué EN PREMIER sur toute nouvelle feature/bug/tâche non triviale.", "superpowers charge les skills disponibles et orchestre le workflow. Son mode 'plan' natif est REMPLACÉ par speckit.", "Le cycle speckit en 6 phases :", "• specify : décrire ce qu'on veut construire (feature ou bug)", "• clarify : Claude pose des questions une par une pour affiner", "• plan : 2-3 options architecturales, compromis explicités", "• tasks : décomposition TDD — tests écrits AVANT l'implémentation", "• analyze : cohérence cross-artifacts vérifiée avant de coder", "• implement : code itératif, commits fréquents", "Invoquer : le skill superpowers-speckit dans Claude Code, ou taper 'utilise speckit pour <feature>'."], commandes: ["# Lancer superpowers au démarrage d'une nouvelle feature :\n# Claude charge les skills automatiquement via SessionStart hook.\n# Pour une nouvelle feature, taper dans le prompt :\n# 'Utilise speckit pour [décrire la feature]'\n#\n# Claude invoque alors dans l'ordre :\n# superpowers-speckit → specify → clarify → plan → tasks → analyze → implement"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/"] },
+        { title: "Configurer CLAUDE.md avec Skill Priority", concept: ["La section Skill Priority dans CLAUDE.md dit à Claude d'utiliser speckit en priorité pour tout nouveau développement.", "Sans cette directive, Claude peut choisir d'autres workflows (brainstorming, writing-plans) qui sont moins structurés.", "Ce fichier dans le dossier projet surcharge les settings globaux pour ce projet."], commandes: ["cat >> CLAUDE.md <<'EOF'\n\n## Skill Priority\n\n- **Pour tout nouveau développement** (feature, projet, composant) : utiliser le skill `superpowers-speckit` au lieu de `superpowers:brainstorming` et `superpowers:writing-plans`. Le workflow spec-kit (specify→clarify→plan→tasks→analyze→implement) remplace les phases brainstorming et planning de superpowers.\n- Les autres skills superpowers restent actifs normalement (TDD, debugging, worktrees, code-review, finishing-branch, verification).\nEOF"], verify: ["grep -A4 'Skill Priority' CLAUDE.md"] },
+        { title: "Les 4 quality gates (obligatoires avant commit)", concept: ["Avant tout commit, dans cet ordre :", "• /verification : tests, build, lint — s'assure que rien n'est cassé", "• /code-review : revue complète du code produit", "• /simplify : éliminer la complexité inutile (YAGNI)", "• /finishing : polish final, cohérence, documentation minimale", "Ces gates sont non-négociables. Un commit sans elles risque d'introduire des régressions non détectées."], commandes: ["# Séquence quality gates avant commit :\n# /verification\n# /code-review\n# /simplify\n# /finishing\n# git add ... && git commit -m 'feat: ...'"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -E 'verification|code-review|simplify|finishing'"] }
+      ]},
+      { id: "multiagents", icon: "🤖", short: "Multi-agents", title: "Multi-agents", desc: "⚠️ Utile uniquement si vous avez plusieurs abonnements actifs (Anthropic + OpenAI et/ou Google). Coordonne Claude (orchestration), Codex (implémentation) et Gemini (gratuit, git/docs) via tmux.", steps: [
+        { title: "Prérequis : abonnements nécessaires", concept: ["⚠️ Le multi-agent n'apporte de la valeur que si vous avez plusieurs abonnements CLI actifs. Avec un seul compte Claude, restez en solo.", "Claude (Anthropic) : orchestrateur et architecte. Abonnement Pro (~20$/mo) ou Max (~100-200$/mo). CLI : claude.", "Codex (OpenAI) : développeur senior, le meilleur générateur de code (SWE-bench Pro SOTA). Inclus dans ChatGPT Pro. CLI : codex. Utiliser pour les implémentations features ciblées.", "Gemini (Google) : gratuit (60 req/min, 1000/jour). Rôle : git/GitHub (branches, commits, PRs), documentation, analyse de contexte large (1M tokens), modules secondaires. CLI : gemini.", "Architecture : Claude orchestre via le filesystem (.ai/state.json, .ai/context/, .ai/tasks/). Un fichier = un agent max pour éviter les conflits d'écriture.", "Matrice de décision : tâche d'implémentation complexe → Codex. Git/PR/docs → Gemini. Architecture/review/réconciliation → Claude."], commandes: ["# Installer les CLIs selon vos abonnements :\nnpm install -g @anthropic-ai/claude-code        # Claude (toujours)\nnpm install -g @openai/codex                    # Codex (si ChatGPT Pro)\n# Gemini : https://ai.google.dev/gemini-api/docs/gemini-cli\n\n# Vérifier :\ncommand -v claude && echo '✓ claude'\ncommand -v codex && echo '✓ codex'\ncommand -v gemini && echo '✓ gemini'"], verify: ["command -v claude && command -v tmux"] },
+        { title: "Installer tmux-ai", concept: ["tmux-ai cree des sessions reproductibles: solo, duo, team, monitor et review.", "Layouts : solo (Claude + shell), duo (Claude + Gemini), team (Claude + Codex + Gemini + shell), monitor (Claude + tests + logs + git).", "Le flag -k supprime la session existante avant de la recreer."], commandes: ["mkdir -p ~/bin", "pbpaste > ~/bin/tmux-ai", "chmod +x ~/bin/tmux-ai"], verify: ["~/bin/tmux-ai --help"], src: "src-tmux-ai" },
+        { title: "Protocole de coordination inter-agents", concept: ["Le filesystem est le bus de communication entre agents. Structure standard dans .ai/ :", "• .ai/state.json : état global — qui fait quoi, sur quels fichiers (verrous)", "• .ai/context/codex-brief.md : briefing complet pour Codex (contexte + mission + fichiers interdits)", "• .ai/context/gemini-brief.md : briefing pour Gemini", "• .ai/tasks/ : fiches de tâches assignées", "• .ai/logs/ : sorties brutes des agents", "Protocole en 4 temps : BRIEF (Claude prépare) → EXÉCUTION (agent) → DEBRIEF (Claude valide) → RÉCONCILIATION (Claude si besoin).", "⚠️ Règle critique : Git JAMAIS pendant qu'un agent écrit. Git = séquentiel, toujours confié à Gemini après validation Claude."], commandes: ["mkdir -p .ai/{context,tasks,logs,reviews}\ncat > .ai/state.json <<'EOF'\n{\n  \"agents\": {},\n  \"file_locks\": {},\n  \"current_phase\": \"planning\"\n}\nEOF"], verify: ["test -f .ai/state.json && echo '✓ structure .ai/ OK'"] },
+        { title: "Tester un layout", concept: ["Un test rapide valide tmux, les chemins et les commandes disponibles avant une vraie session."], commandes: ["tmux-ai solo -k", "tmux ls | grep tmux-ai-solo"], verify: ["tmux has-session -t tmux-ai-solo && echo \"session OK\""] }
+      ]},
+      { id: "browser", icon: "🌐", short: "Browser automation", title: "Automatisation browser", desc: "Configure dev-browser (CLI Playwright sandboxé) + Comet en mode debug. Inclut le workaround critique Playwright 1.58.2.", steps: [
+        { title: "Installer dev-browser", concept: ["dev-browser est un CLI Playwright sandboxé en QuickJS WASM.", "Mode --connect : se connecte au Comet ouvert sur le port de debug 9222 (session authentifiée).", "Mode standalone (sans --connect) : navigateur managé pour les tâches sans auth."], commandes: ["npm install -g dev-browser", "dev-browser install"], verify: ["dev-browser --version"] },
+        { title: "Re-pin Playwright 1.58.2 (workaround obligatoire)", concept: ["Bug connu : SawyerHood/dev-browser#90 — le sandbox QuickJS WASM est compilé contre Playwright 1.58.2.", "Si npm installe une version plus récente, les appels API échouent silencieusement.", "Ce re-pin doit être refait après chaque npm update -g dev-browser ou dev-browser install."], commandes: ["cd ~/.dev-browser", "npm install playwright@1.58.2 playwright-core@1.58.2", "npx playwright install chromium", "dev-browser stop"], verify: ["cat ~/.dev-browser/node_modules/playwright/package.json | jq -r '.version'"] },
+        { title: "Créer le script comet-debug", concept: ["comet-debug gère le cycle de vie de Comet avec le port debug :", "• Si Comet tourne déjà avec le port 9222 → ne fait rien (exit 0)", "• Si Comet tourne sans le port debug → le quitte proprement et relance avec --remote-debugging-port=9222", "• --status : diagnostic sans mutation", "À appeler systématiquement avant dev-browser --connect."], commandes: ["mkdir -p ~/.local/bin", "# Copier le script (voir ci-dessous), puis :", "chmod +x ~/.local/bin/comet-debug"], verify: ["comet-debug --status"], src: "src-comet-debug" },
+        { title: "Tester la connexion", concept: ["Une fois comet-debug lancé, dev-browser --connect se connecte à Comet via le port 9222 et expose l'API Playwright sur les onglets ouverts."], commandes: ["comet-debug\ndev-browser --connect <<'EOF'\nconst tabs = await browser.listPages();\nconsole.log(JSON.stringify(tabs, null, 2));\nEOF"], verify: ["# La liste des onglets Comet s'affiche en JSON"] }
+      ]},
+      { id: "n8n", icon: "🔄", short: "Workflows N8N", title: "Workflows N8N", desc: "Créer et gérer des workflows N8N depuis Claude Code via deux MCP complémentaires : n8n-mcp (interaction directe : search_nodes, get_node, create) + Context7 (documentation à jour des nœuds).", steps: [
+        { title: "n8n-mcp + Context7 — l'approche à deux MCP", concept: ["Deux MCP se complètent pour travailler avec N8N :", "• n8n-mcp (via supergateway) : pont StreamableHttp vers le MCP server intégré de N8N à /mcp-server/http. Expose search_nodes, get_node, validate, create_workflow. Auth : JWT Bearer token.", "• Context7 : récupère la doc officielle à jour d'un nœud en 2 appels (resolve-library-id → query-docs). Toujours consulter AVANT d'utiliser un nœud inconnu.", "Workflow type : Context7 (doc) → search_nodes → get_node → validate → create_workflow → test.", "Instance N8N : https://n8n.kimsufi.automatisia.fr. JWT à générer dans N8N → Settings → MCP Server."] },
+        { title: "Configurer n8n-mcp (supergateway) + Context7 dans mcp.json", concept: ["N8N expose nativement un MCP server à l'URL /mcp-server/http. On s'y connecte via supergateway en mode StreamableHttp.", "Authentification : JWT Bearer token généré dans N8N → Settings → MCP Server (ou API → Create Token).", "⚠️ Ne jamais mettre le JWT dans CLAUDE.md — uniquement dans mcp.json (chmod 600, non versionné).", "Context7 complète le dispositif pour la doc des nœuds N8N à jour."], commandes: ["# 1. Créer mcp.json si absent\nmkdir -p ~/.claude\n[ ! -f ~/.claude/mcp.json ] && echo '{\"mcpServers\":{}}' > ~/.claude/mcp.json\n\n# 2. Ajouter n8n-mcp via supergateway (remplacer <JWT> par ton token)\njq '.mcpServers[\"n8n-mcp\"] = {\n  \"command\": \"npx\",\n  \"args\": [\"-y\", \"supergateway\",\n    \"--streamableHttp\",\n    \"https://n8n.kimsufi.automatisia.fr/mcp-server/http\",\n    \"--header\",\n    \"authorization:Bearer <JWT>\"\n  ]\n}' ~/.claude/mcp.json > /tmp/mcp.json && mv /tmp/mcp.json ~/.claude/mcp.json\n\n# 3. Ajouter Context7\njq '.mcpServers.context7 = {\"command\":\"npx\",\"args\":[\"-y\",\"@upstash/context7-mcp@latest\"]}' ~/.claude/mcp.json > /tmp/mcp.json && mv /tmp/mcp.json ~/.claude/mcp.json\n\nchmod 600 ~/.claude/mcp.json"], verify: ["jq '.mcpServers | keys' ~/.claude/mcp.json\n# Doit afficher [\"context7\", \"n8n-mcp\"]\n# Dans Claude Code : /mcp → les deux doivent apparaître"] },
+        { title: "Créer le notebook NotebookLM N8N", concept: ["1. Aller sur notebooklm.google.com → Nouveau notebook → 'N8N Base de Connaissances'", "2. Ajouter la documentation officielle N8N comme source (URL https://docs.n8n.io ou PDF)", "3. NotebookLM génère un résumé et permet des Q&R sémantiques sur la doc", "Garder l'ID du notebook pour le référencer dans les sessions."] },
+        { title: "Workflow de création — 6 étapes", concept: ["Pour chaque workflow N8N à créer, suivre ce cycle en combinant les deux MCP :", "1. Context7 (MCP context7) → resolve-library-id('n8n') → query-docs(topic) — doc officielle du nœud", "2. n8n-mcp → search_nodes(query) — liste les nœuds disponibles dans l'instance N8N", "3. n8n-mcp → get_node(nodeType, 'standard') — structure complète du nœud avec ses paramètres", "4. n8n-mcp → validate(workflowJson) — vérifier la configuration avant création", "5. n8n-mcp → create_workflow(workflowJson) — créer le workflow dans l'instance N8N", "6. Test manuel dans l'interface N8N ou via l'API — vérifier le comportement attendu"], commandes: ["# Dans Claude Code avec les deux MCP actifs :\n# 'Utilise Context7 pour la doc du nœud HTTP Request, puis n8n-mcp pour créer le workflow'\n\n# Vérifier que les outils MCP sont disponibles :\n# /mcp → 'n8n' et 'context7' doivent apparaître dans la liste"] },
+        { title: "Les 5 patterns d'agents N8N", concept: ["Les patterns réutilisables pour structurer les agents N8N :", "• Pattern 1 — Parent Agent : orchestrateur qui délègue aux sub-agents via Execute Workflow.", "• Pattern 2 — Prompt Chaining : sortie LLM → entrée du nœud suivant (pipeline séquentiel).", "• Pattern 3 — Routing : l'agent choisit quel sous-workflow exécuter selon le contexte (Switch node).", "• Pattern 4 — Parallelization : branches parallèles, résultats agrégés (Merge node).", "• Pattern 5 — Evaluator-Optimizer : un agent évalue la sortie d'un autre, boucle jusqu'à satisfaction (loop + condition)."]}
+      ]},
+      { id: "telegram", icon: "📱", short: "Accès distant", title: "Accès distant — Telegram", desc: "Contrôle Claude Code depuis mobile via un bot Telegram. Plugin officiel + script cc + politique allowlist.", steps: [
+        { title: "Créer le bot via BotFather", concept: ["Sur Telegram, ouvrir une conversation avec @BotFather :", "1. Envoyer /newbot", "2. Choisir un nom d'affichage (ex: 'Mon Claude Code')", "3. Choisir un username unique se terminant par 'bot' (ex: monclaudecode_bot)", "4. Noter le token reçu (format : 123456789:AAH...)", "Le plugin telegram@claude-plugins-official est déjà activé via settings.json (module Plugins)."] },
+        { title: "Configurer .env et access.json", concept: ["Deux fichiers dans ~/.claude/channels/telegram/ :", "• .env : contient le token du bot (ne pas versionner, chmod 600)", "• access.json : gère la politique d'accès — commencer en mode pairing pour capturer ton user_id Telegram, puis passer en allowlist."], commandes: ["mkdir -p ~/.claude/channels/telegram\nchmod 700 ~/.claude/channels/telegram\n# Token dans .env :\necho 'TELEGRAM_BOT_TOKEN=<voir vault>' > ~/.claude/channels/telegram/.env\nchmod 600 ~/.claude/channels/telegram/.env\n# access.json initial (mode pairing) :\ncat > ~/.claude/channels/telegram/access.json <<'EOF'\n{\n  \"dmPolicy\": \"pairing\",\n  \"allowedUsers\": []\n}\nEOF"], verify: ["ls -la ~/.claude/channels/telegram/"] },
+        { title: "Politique d'accès allowlist", concept: ["Le mode pairing est temporaire — il génère un code unique quand un inconnu envoie un message.", "Workflow : cc → envoyer un message depuis Telegram → noter le code de pairing → /telegram:access pair <code>", "Une fois ton user_id connu, passer en allowlist pour fermer le pairing."], commandes: ["# Après avoir capturé ton user_id via pairing :\ncat > ~/.claude/channels/telegram/access.json <<'EOF'\n{\n  \"dmPolicy\": \"allowlist\",\n  \"allowedUsers\": [\n    {\n      \"userId\": \"<ton-user-id-telegram>\",\n      \"displayName\": \"Philippe\"\n    }\n  ]\n}\nEOF"], verify: ["cat ~/.claude/channels/telegram/access.json | jq '.dmPolicy'"] },
+        { title: "Tester l'accès distant", concept: ["Lancer cc (le script du step suivant) pour démarrer Claude avec le canal Telegram.", "Envoyer un message simple depuis Telegram : 'Bonjour' ou 'date'.", "Claude répond directement dans le chat Telegram."], commandes: ["cc", "# Ou manuellement :\nclaude --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official"], verify: ["# Depuis Telegram, envoyer 'pwd' → Claude doit répondre avec le chemin courant"] },
+        { title: "Script cc — lancement simplifié", concept: ["Le script cc concentre les deux options nécessaires à l'accès distant :", "• --dangerously-skip-permissions : évite les confirmations interactives (impossible à valider depuis Telegram)", "• --channels plugin:telegram@... : active le canal au démarrage", "À lancer dans tmux pour garder une session récupérable après déconnexion."], commandes: ["mkdir -p ~/.local/bin\n# Copier le script ci-dessous, puis :\nchmod +x ~/.local/bin/cc\n# Ajouter ~/.local/bin au PATH dans ~/.zshrc :\nexport PATH=\"$HOME/.local/bin:$PATH\""], verify: ["cat ~/.local/bin/cc"], src: "src-cc" }
+      ]}
+    ];
+    const MEMORY_IDS = ["memory-md", "memory-sqlite", "memory-claudemem", "memory-coord"];
+    let progress = {};
+    let openTabs = {};
+    let currentModule = "base";
+
+    function loadJson(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch (e) { return fallback; }
+    }
+    function saveProgress() { localStorage.setItem("ccsg_progress", JSON.stringify(progress)); }
+    function saveTabs() { localStorage.setItem("ccsg_open_tabs", JSON.stringify(openTabs)); }
+    function el(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+    function codeBlock(text, src) {
+      const wrap = el("div", "code-wrap");
+      const pre = el("pre", "code-block");
+      if (src) pre.setAttribute("data-src", src);
+      if (text) pre.textContent = text;
+      const btn = el("button", "copy-btn", "Copier");
+      btn.setAttribute("onclick", "copyCode(this)");
+      wrap.append(pre, btn);
+      return wrap;
+    }
+    function buildTextPane(step, key) {
+      const pane = el("div", "tab-pane");
+      pane.setAttribute("data-tab", key);
+      if (key === "concept") {
+        const list = el("ul");
+        step.concept.forEach(function (txt) { list.appendChild(el("li", "", txt)); });
+        pane.appendChild(list);
+        if (step.src) {
+          const tip = el("div", "tip", "Script complet inclus ci-dessous. Copie-le dans le fichier indique puis rends-le executable.");
+          pane.appendChild(tip);
+        }
+      }
+      if (key === "commandes") {
+        (step.commandes || []).forEach(function (cmd) { pane.appendChild(codeBlock(cmd)); });
+        if (step.src) pane.appendChild(codeBlock("", step.src));
+        if (!step.commandes && !step.src) { var note = el("p", ""); note.textContent = "Aucune commande — voir le concept ci-dessus."; note.style.color = "var(--muted)"; pane.appendChild(note); }
+      }
+      if (key === "verification") {
+        (step.verify || []).forEach(function (cmd) { pane.appendChild(codeBlock(cmd)); });
+        if (!step.verify) { var note2 = el("p", ""); note2.textContent = "Vérification manuelle — voir le concept."; note2.style.color = "var(--muted)"; pane.appendChild(note2); }
+      }
+      return pane;
+    }
+    function renderSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.textContent = "";
+      addNav(sidebar, MODULES[0]);
+      addNav(sidebar, MODULES[1]);
+      const group = el("div", "memory-group open");
+      const head = el("button", "memory-head");
+      head.append(el("span", "nav-icon", "🧠"), el("span", "nav-title", "Mémoire"), el("span", "nav-count", memoryCountText()), el("span", "chev", "›"));
+      head.addEventListener("click", function () { group.classList.toggle("open"); });
+      const children = el("div", "memory-children");
+      MEMORY_IDS.forEach(function (id) { addNav(children, MODULES.find(function (m) { return m.id === id; })); });
+      group.append(head, children);
+      sidebar.appendChild(group);
+      MODULES.slice(6).forEach(function (m) { addNav(sidebar, m); });
+      const sideProgress = el("div", "side-progress");
+      const track = el("div", "progress-track");
+      track.appendChild(el("div", "progress-fill"));
+      sideProgress.append(track, el("div", "progress-label"));
+      sidebar.appendChild(sideProgress);
+    }
+    function addNav(parent, mod) {
+      const btn = el("button", "nav-item");
+      btn.setAttribute("data-module", mod.id);
+      btn.append(el("span", "nav-icon", mod.icon), el("span", "nav-title", mod.short), el("span", "nav-count", countText(mod)));
+      btn.addEventListener("click", function () { openModule(mod.id); });
+      parent.appendChild(btn);
+    }
+    function renderModules() {
+      const content = document.getElementById("content");
+      content.textContent = "";
+      MODULES.forEach(function (mod) {
+        const panel = el("section", "module-panel");
+        panel.id = "module-" + mod.id;
+        const hero = el("div", "module-hero");
+        const copy = el("div");
+        copy.append(el("div", "module-kicker", mod.icon + " Module " + (MODULES.indexOf(mod) + 1) + " / 11"), el("h2", "module-title", mod.title), el("p", "module-desc", mod.desc));
+        const meter = el("div", "module-meter");
+        meter.append(el("strong", "meter-num", countText(mod)), el("span", "", "étapes"));
+        hero.append(copy, meter);
+        const btn = el("button", "claude-btn", "🤖 Configurer avec Claude →");
+        btn.setAttribute("onclick", "togglePrompt('" + mod.id + "')");
+        const prompt = el("div", "prompt-panel");
+        prompt.id = "prompt-" + mod.id;
+        prompt.append(el("p", "prompt-note", "Copie ce prompt dans une session Claude Code pour configurer ce module automatiquement."));
+        const pre = el("pre", "prompt-text");
+        pre.setAttribute("data-src", "prompt-" + mod.id + "-content");
+        const copyBtn = el("button", "copy-prompt-btn", "Copier le prompt");
+        copyBtn.setAttribute("onclick", "copyPrompt(this)");
+        prompt.append(pre, copyBtn);
+        const steps = el("div", "steps");
+        mod.steps.forEach(function (step, idx) { steps.appendChild(renderStep(mod, step, idx + 1)); });
+        panel.append(hero, btn, prompt, steps);
+        content.appendChild(panel);
+      });
+    }
+    function renderStep(mod, step, index) {
+      const wrap = el("div", "step");
+      wrap.setAttribute("data-module", mod.id);
+      wrap.setAttribute("data-index", String(index));
+      const hdr = el("div", "step-hdr");
+      const chk = el("div", "step-chk");
+      chk.setAttribute("onclick", "handleCheck(event,this)");
+      hdr.setAttribute("onclick", "toggleStep(this)");
+      hdr.append(chk, el("span", "step-title", index + ". " + step.title), el("span", "step-badge", "EN COURS"));
+      const body = el("div", "step-body");
+      const tabs = el("div", "tabs-bar");
+      ["concept", "commandes", "verification"].forEach(function (name) {
+        const b = el("button", "tab-btn", name === "concept" ? "Concept" : name === "commandes" ? "Commandes" : "Vérifie");
+        b.setAttribute("data-tab", name);
+        b.setAttribute("onclick", "switchTabBtn(this)");
+        tabs.appendChild(b);
+      });
+      body.appendChild(tabs);
+      body.append(buildTextPane(step, "concept"), buildTextPane(step, "commandes"), buildTextPane(step, "verification"));
+      wrap.append(hdr, body);
+      return wrap;
+    }
+    function countDone(mod) {
+      const state = progress[mod.id] || {};
+      return Object.keys(state).filter(function (k) { return state[k]; }).length;
+    }
+    function countText(mod) { return countDone(mod) + "/" + mod.steps.length; }
+    function memoryCountText() {
+      let done = 0; let total = 0;
+      MEMORY_IDS.forEach(function (id) { const m = MODULES.find(function (x) { return x.id === id; }); done += countDone(m); total += m.steps.length; });
+      return done + "/" + total;
+    }
+    function applyState() {
+      MODULES.forEach(function (mod) {
+        let locked = false;
+        mod.steps.forEach(function (step, idx) {
+          const index = idx + 1;
+          const node = document.querySelector('.step[data-module="' + mod.id + '"][data-index="' + index + '"]');
+          const done = Boolean(progress[mod.id] && progress[mod.id][index]);
+          node.classList.toggle("done", done);
+          node.classList.toggle("locked", locked);
+          node.classList.remove("expanded");
+          if (!locked && !done && index === firstOpenIndex(mod)) node.classList.add("expanded");
+          if (done) locked = false;
+          if (!done && index >= firstIncompleteIndex(mod)) locked = true;
+          applyTab(node, mod.id + "-" + index);
+        });
+      });
+      updateCounts();
+      loadCodeSources();
+    }
+    function firstIncompleteIndex(mod) {
+      for (let i = 1; i <= mod.steps.length; i += 1) if (!(progress[mod.id] && progress[mod.id][i])) return i;
+      return mod.steps.length + 1;
+    }
+    function firstOpenIndex(mod) {
+      const first = firstIncompleteIndex(mod);
+      return first <= mod.steps.length ? first : 1;
+    }
+    function updateCounts() {
+      document.querySelectorAll(".nav-item").forEach(function (btn) {
+        const mod = MODULES.find(function (m) { return m.id === btn.getAttribute("data-module"); });
+        btn.querySelector(".nav-count").textContent = countText(mod);
+        btn.classList.toggle("active", mod.id === currentModule);
+      });
+      const memoryHead = document.querySelector(".memory-head .nav-count");
+      if (memoryHead) memoryHead.textContent = memoryCountText();
+      MODULES.forEach(function (mod) {
+        const panel = document.getElementById("module-" + mod.id);
+        if (panel) panel.querySelector(".meter-num").textContent = countText(mod);
+      });
+      const completed = MODULES.filter(function (m) { return countDone(m) === m.steps.length; }).length;
+      document.querySelector(".progress-fill").style.width = ((completed / MODULES.length) * 100) + "%";
+      document.querySelector(".progress-label").textContent = completed + " / " + MODULES.length + " modules";
+    }
+    function openModule(id) {
+      currentModule = id;
+      localStorage.setItem("ccsg_open_module", id);
+      document.querySelectorAll(".module-panel").forEach(function (p) { p.classList.toggle("active", p.id === "module-" + id); });
+      updateCounts();
+      document.getElementById("content").scrollTop = 0;
+    }
+    function toggleStep(header) {
+      const step = header.closest(".step");
+      if (step.classList.contains("locked")) return;
+      if (step.classList.contains("done")) step.classList.toggle("expanded");
+      else step.classList.toggle("expanded");
+    }
+    function handleCheck(event, checkbox) {
+      event.stopPropagation();
+      const step = checkbox.closest(".step");
+      const moduleId = step.getAttribute("data-module");
+      const index = Number(step.getAttribute("data-index"));
+      const mod = MODULES.find(function (m) { return m.id === moduleId; });
+      if (!progress[moduleId]) progress[moduleId] = {};
+      if (progress[moduleId][index]) {
+        for (let i = index; i <= mod.steps.length; i += 1) delete progress[moduleId][i];
+      } else {
+        progress[moduleId][index] = true;
+        if (index === mod.steps.length) confetti();
+      }
+      saveProgress();
+      applyState();
+    }
+    function switchTabBtn(btn) {
+      const body = btn.closest(".step-body");
+      const step = btn.closest(".step");
+      const key = step.getAttribute("data-module") + "-" + step.getAttribute("data-index");
+      const tab = btn.getAttribute("data-tab");
+      openTabs[key] = tab;
+      saveTabs();
+      body.querySelectorAll(".tab-btn").forEach(function (b) { b.classList.toggle("active", b === btn); });
+      body.querySelectorAll(".tab-pane").forEach(function (p) { p.classList.toggle("visible", p.getAttribute("data-tab") === tab); });
+    }
+    function applyTab(step, key) {
+      const selected = openTabs[key] || "concept";
+      step.querySelectorAll(".tab-btn").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-tab") === selected); });
+      step.querySelectorAll(".tab-pane").forEach(function (p) { p.classList.toggle("visible", p.getAttribute("data-tab") === selected); });
+    }
+    function loadCodeSources() {
+      document.querySelectorAll("pre[data-src]").forEach(function (pre) {
+        const src = document.getElementById(pre.getAttribute("data-src"));
+        if (src) pre.textContent = src.textContent.trim();
+      });
+    }
+    function copyCode(btn) {
+      const text = btn.parentElement.querySelector("pre").textContent;
+      navigator.clipboard.writeText(text).then(function () { flash(btn, "Copié"); });
+    }
+    function copyPrompt(btn) {
+      const text = btn.parentElement.querySelector("pre").textContent;
+      navigator.clipboard.writeText(text).then(function () { flash(btn, "Prompt copié"); });
+    }
+    function flash(btn, label) {
+      const old = btn.textContent;
+      btn.textContent = label;
+      setTimeout(function () { btn.textContent = old; }, 1100);
+    }
+    function togglePrompt(moduleId) {
+      document.getElementById("prompt-" + moduleId).classList.toggle("open");
+      loadCodeSources();
+    }
+    function setTheme(theme) {
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem("ccsg_theme", theme);
+      document.querySelectorAll(".theme-btn").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-theme-choice") === theme); });
+    }
+    function confetti() {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      const css = getComputedStyle(document.body);
+      const colors = [css.getPropertyValue("--accent").trim(), css.getPropertyValue("--accent2").trim(), css.getPropertyValue("--success").trim(), "#f59e0b", "#ef4444"];
+      const parts = [];
+      for (let i = 0; i < 150; i += 1) parts.push({ x: Math.random() * canvas.width, y: -20 - Math.random() * 120, w: 5 + Math.random() * 9, h: 8 + Math.random() * 14, vy: 2 + Math.random() * 5, vx: -2 + Math.random() * 4, r: Math.random() * 6.28, vr: -.2 + Math.random() * .4, c: colors[i % colors.length] });
+      const start = performance.now();
+      function frame(now) {
+        const t = Math.min(1, (now - start) / 1500);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1 - t;
+        parts.forEach(function (p) {
+          p.x += p.vx; p.y += p.vy; p.r += p.vr;
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+        });
+        if (t < 1) requestAnimationFrame(frame); else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      requestAnimationFrame(frame);
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      progress = loadJson("ccsg_progress", {});
+      openTabs = loadJson("ccsg_open_tabs", {});
+      renderSidebar();
+      renderModules();
+      document.querySelectorAll(".theme-btn").forEach(function (btn) { btn.addEventListener("click", function () { setTheme(btn.getAttribute("data-theme-choice")); }); });
+      setTheme(localStorage.getItem("ccsg_theme") || "system");
+      currentModule = localStorage.getItem("ccsg_open_module") || "base";
+      applyState();
+      openModule(currentModule);
+    });
+    window.toggleStep = toggleStep;
+    window.handleCheck = handleCheck;
+    window.switchTabBtn = switchTabBtn;
+    window.copyCode = copyCode;
+    window.copyPrompt = copyPrompt;
+    window.togglePrompt = togglePrompt;
+  </script>
+
+  <script type="text/x-code" id="prompt-base-content">
+Configure l'installation de base macOS pour Claude Code.
+
+Effectue les actions suivantes dans l'ordre :
+
+1. Vérifie si Homebrew est installé (brew --version). Si absent, installe-le depuis https://brew.sh.
+2. Installe les outils de base si absents : git, node, jq, tmux (brew install git node jq tmux).
+3. Installe Claude Code CLI : npm install -g @anthropic-ai/claude-code. Vérifie avec claude --version.
+4. Crée ~/.claude/ et ~/.claude/settings.json avec le contenu minimal {"model":"sonnet","language":"français"} si le fichier n'existe pas encore.
+5. Informe l'utilisateur que Comet browser doit être téléchargé manuellement depuis https://www.comet.so et glissé dans /Applications.
+
+Contraintes :
+- Ne pas écraser ~/.claude/settings.json s'il existe — utiliser jq pour merger.
+- Ne pas modifier ~/.zshrc sans demande explicite.
+- Vérifier chaque étape avant de passer à la suivante.
+  </script>
+
+  <script type="text/x-code" id="prompt-rtk-content">
+Configure RTK (Rust Token Killer) et le hook de réécriture pour Claude Code.
+
+Repo officiel : https://github.com/PsychoLlama/rtk
+
+Effectue les actions suivantes :
+
+1. Vérifie si jq est installé (jq --version). Si absent : brew install jq.
+2. Installe RTK : essaie d'abord `brew install rtk`. Si Homebrew ne connaît pas rtk, utilise `cargo install rtk` (Rust requis). Vérifie avec rtk --version que la version est >= 0.23.0.
+3. Crée ~/.claude/hooks/ si absent.
+4. Crée ~/.claude/hooks/rtk-rewrite.sh avec le contenu du hook RTK (voir src-rtk-rewrite dans le guide). Rends-le exécutable (chmod +x).
+5. Fusionne le hook dans ~/.claude/settings.json sous hooks.PreToolUse avec le matcher "Bash" :
+   jq '.hooks.PreToolUse += [{"matcher":"Bash","hooks":[{"type":"command","command":"$HOME/.claude/hooks/rtk-rewrite.sh"}]}]' ~/.claude/settings.json > /tmp/cc.json && mv /tmp/cc.json ~/.claude/settings.json
+6. Ajoute dans ~/.claude/CLAUDE.md une section RTK documentant les commandes utiles : rtk gain, rtk gain --history, rtk discover, et la commande /advisor.
+
+Contraintes :
+- Préserver le settings.json existant (merge uniquement).
+- Ne pas créer settings.json s'il n'existe pas — le créer avec {} d'abord.
+  </script>
+
+  <script type="text/x-code" id="prompt-memory-md-content">
+Configure le système de mémoire fichiers Markdown pour Claude Code.
+
+Effectue les actions suivantes :
+
+1. Crée ~/.claude/CLAUDE.md s'il n'existe pas (ne pas écraser). Contenu minimal : langue française, lire le code avant de modifier, préférer les patches ciblés.
+2. Ajoute une section "Mémoire projet" dans CLAUDE.md avec les conventions de base.
+3. Crée .claude/memories/decisions.md dans le répertoire courant pour les décisions projet.
+4. Implémente la stratégie de split CLAUDE.md / MEMORY.md :
+   - CLAUDE.md doit rester < 200 lignes, contenir uniquement les règles comportementales actives.
+   - Crée ~/.claude/projects/$(basename $PWD)/memory/MEMORY.md comme index des mémoires projet.
+   - Ajoute la référence @MEMORY.md dans CLAUDE.md pour un chargement à la demande.
+5. Explique à l'utilisateur la règle de split : règle comportementale → CLAUDE.md, fait projet/credential/décision → fichier lié via MEMORY.md.
+
+Contraintes :
+- Ne jamais écraser un CLAUDE.md existant — append uniquement.
+- Créer les dossiers parents si absents.
+  </script>
+
+  <script type="text/x-code" id="prompt-memory-sqlite-content">
+Configure la mémoire SQLite (cc-mem) pour Claude Code.
+
+Effectue les actions suivantes :
+
+1. Vérifie si sqlite3 est disponible. Si absent : brew install sqlite.
+2. Crée ~/.claude/memory/ si absent.
+3. Initialise ~/.claude/memory/memory.db avec le schéma : table memories(id, type, key, value, tags, created_at, updated_at, UNIQUE(type,key)).
+4. Crée le script ~/.claude/cc-mem avec les commandes add, list, get. Rends-le exécutable.
+5. Ajoute dans ~/.claude/CLAUDE.md les directives complètes pour Claude :
+   - Quand consulter SQLite (avant hypothèse sur préférence ou décision passée)
+   - Types de données atomiques : pref, decision, snippet, note
+   - Règle : ne jamais stocker credentials ou tokens dans SQLite
+   - Commandes : cc-mem add type key value, cc-mem get mot-clé, cc-mem list
+6. Insère quelques entrées de démonstration : une pref de langue, une note d'initialisation.
+
+Contraintes :
+- Préserver les données existantes dans memory.db si le fichier existe.
+- Utiliser INSERT OR REPLACE pour éviter les doublons.
+  </script>
+
+  <script type="text/x-code" id="prompt-memory-claudemem-content">
+Configure claude-mem (capture automatique de mémoire de session) pour Claude Code.
+
+Effectue les actions suivantes :
+
+1. Installe claude-mem globalement : npm install -g claude-mem. Vérifie avec claude-mem --version.
+2. Initialise le stockage : claude-mem init --dir ~/.claude/claude-mem.
+3. Ajoute les alias dans ~/.zshrc (sans doublon) : cm-add='claude-mem add', cm-find='claude-mem search', cm-list='claude-mem list'.
+4. Ajoute dans ~/.claude/CLAUDE.md les directives pour Claude :
+   - Utiliser claude-mem search avant toute hypothèse sur une décision passée
+   - Utiliser claude-mem timeline pour retrouver l'historique d'une session
+   - Ne jamais écrire manuellement dans claude-mem (capture automatique via hooks)
+   - Utiliser claude-mem add uniquement pour les préférences stables explicites
+5. Vérifie que les hooks de capture automatique sont actifs.
+
+Contraintes :
+- Ne pas modifier ~/.zshrc si les alias existent déjà (vérifier avec grep).
+- Préserver le dossier ~/.claude/claude-mem s'il existe.
+  </script>
+
+  <script type="text/x-code" id="prompt-memory-coord-content">
+Configure les directives de coordination du système de mémoire hybride à 3 briques pour Claude Code.
+
+Effectue les actions suivantes :
+
+1. Ajoute dans ~/.claude/CLAUDE.md une section "Système de mémoire — Table de routage" avec la logique de décision :
+   - Stack/ports/URLs/credentials projet → fichiers curatés (MEMORY.md → fichiers liés)
+   - Règles comportementales → CLAUDE.md (court)
+   - Préférence atomique → SQLite (cc-mem add pref ...)
+   - Décision datée → SQLite (cc-mem add decision ...)
+   - Historique session / "qu'avons-nous fait la dernière fois" → claude-mem timeline
+   - Bug déjà vu → claude-mem search
+   - Credentials/tokens → fichiers curatés UNIQUEMENT (jamais dans claude-mem ni SQLite)
+
+2. Ajoute les directives de lecture : Claude consulte la mémoire quand il détecte des mots-clés comme "habituellement", "comme avant", "quelle est ta préférence", "avons-nous déjà fait ça" — et AVANT de faire des hypothèses.
+
+3. Ajoute les directives d'écriture : Claude écrit en mémoire sur demande explicite ("retiens que", "note ça") ou quand il détecte une correction de comportement.
+
+4. Règle de non-duplication : si un fait est dans MEMORY.md, ne pas le répliquer dans SQLite. Si capturé par claude-mem (automatique), ne pas l'écrire manuellement.
+
+Contraintes :
+- Append uniquement dans CLAUDE.md, ne pas écraser.
+- Garder chaque directive courte et actionnable.
+  </script>
+
+  <script type="text/x-code" id="prompt-plugins-content">
+Configure et installe les 7 plugins Claude Code + le marketplace Codex.
+
+Plugins à installer :
+- superpowers@claude-plugins-official : système de skills (advisor, speckit, TDD, debugging, worktrees, code-review, finishing)
+- codex@openai-codex : intégration Codex CLI (marketplace GitHub openai/codex-plugin-cc)
+- code-review@claude-plugins-official : revue de code automatique
+- security-guidance@claude-plugins-official : alerte sécurité sur Edit/Write
+- skill-creator@claude-plugins-official : créer de nouveaux skills
+- frontend-design@claude-plugins-official : patterns UI/UX
+- telegram@claude-plugins-official : canal d'accès distant
+
+Effectue les actions suivantes :
+
+1. Crée ~/.claude/settings.json si absent (contenu : {}).
+2. Fusionne les paramètres de base avec jq : model=sonnet, language=français, effortLevel=high, advisorModel=opus, autoDreamEnabled=true, skipDangerousModePermissionPrompt=true.
+3. Fusionne enabledPlugins avec les 7 plugins listés ci-dessus (préserver les plugins existants).
+4. Ajoute le marketplace openai-codex : jq '.extraKnownMarketplaces."openai-codex" = {"source":{"source":"github","repo":"openai/codex-plugin-cc"}}' ...
+5. Vérifie le settings.json résultant avec jq '.enabledPlugins | keys'.
+6. Informe l'utilisateur de lancer claude pour déclencher l'installation automatique des plugins.
+
+Contraintes :
+- Toujours merger avec jq, jamais écraser settings.json.
+- Créer settings.json avec {} si absent avant de merger.
+  </script>
+
+  <script type="text/x-code" id="prompt-workflow-content">
+Configure le workflow de développement Claude Code avec superpowers, speckit et les quality gates.
+
+Effectue les actions suivantes :
+
+1. Vérifie que superpowers est installé :
+   ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/
+   Si absent, c'est que les plugins ne sont pas encore installés — faire d'abord le module Plugins.
+
+2. Vérifie que speckit est accessible dans les skills superpowers :
+   ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -i speckit
+   Si absent, relancer claude pour forcer la réinstallation.
+
+3. Crée ou complète CLAUDE.md dans le répertoire courant avec la section Skill Priority :
+   - Pour tout nouveau développement : utiliser superpowers-speckit (remplace brainstorming+writing-plans)
+   - Le cycle : specify → clarify → plan → tasks → analyze → implement
+   - Les autres skills superpowers restent actifs (TDD, debugging, worktrees, code-review, finishing-branch, verification)
+
+4. Ajoute la section "Quality Gates" dans CLAUDE.md :
+   Avant tout commit, dans l'ordre : /verification → /code-review → /simplify → /finishing
+
+5. Ajoute les alias dans ~/.zshrc (sans doublon) : gs='git status', gd='git diff', gl='git log --oneline -20'
+
+6. Documente dans CLAUDE.md quand invoquer /advisor (avant approche complexe, avant déclarer terminé, quand bloqué).
+
+Contraintes :
+- Ne pas modifier un CLAUDE.md existant au-delà des sections manquantes (append uniquement).
+- Préserver ~/.zshrc.
+  </script>
+
+  <script type="text/x-code" id="prompt-multiagents-content">
+Configure le workflow multi-agents Claude + Codex + Gemini avec tmux.
+
+⚠️ PRÉREQUIS : Ce module n'est utile que si vous avez plusieurs abonnements actifs :
+- Claude : Anthropic Pro ou Max (toujours requis)
+- Codex : ChatGPT Pro (inclus dans l'abonnement OpenAI)
+- Gemini : gratuit (60 req/min, 1000/jour via Google AI Studio)
+
+Si vous n'avez que Claude, restez en mode solo et ignorez ce module.
+
+Effectue les actions suivantes :
+
+1. Vérifie les CLIs disponibles : claude, codex, gemini. Installe selon les abonnements :
+   - npm install -g @anthropic-ai/claude-code
+   - npm install -g @openai/codex (si ChatGPT Pro)
+   - Gemini CLI : voir https://ai.google.dev/gemini-api/docs/gemini-cli
+
+2. Crée ~/bin/tmux-ai avec le script tmux-ai du guide (src-tmux-ai). Rends-le exécutable.
+
+3. Crée la structure .ai/ dans le répertoire courant : state.json, context/, tasks/, logs/, reviews/.
+
+4. Ajoute dans ~/.claude/CLAUDE.md les conventions multi-agents :
+   - Rôles : Claude=orchestrateur/architecte, Codex=implémentation features, Gemini=git/docs/analyse contexte
+   - Un fichier = un agent max (table de verrous dans .ai/state.json)
+   - Git toujours séquentiel, confié à Gemini APRÈS validation Claude
+   - Protocole : BRIEF (Claude) → EXÉCUTION (agent) → DEBRIEF (Claude) → RÉCONCILIATION si besoin
+
+5. Teste un layout solo : tmux-ai solo -k
+
+Contraintes :
+- Préserver ~/.zshrc et ~/.claude/CLAUDE.md (append uniquement).
+- Ne pas installer Codex ou Gemini CLI si l'utilisateur n'a pas les abonnements.
+  </script>
+
+  <script type="text/x-code" id="prompt-browser-content">
+Configure dev-browser (CLI Playwright sandboxé) et le script comet-debug pour l'automatisation browser.
+
+Effectue les actions suivantes :
+
+1. Installe dev-browser globalement : npm install -g dev-browser && dev-browser install.
+
+2. Re-pin Playwright 1.58.2 (workaround obligatoire — bug SawyerHood/dev-browser#90) :
+   cd ~/.dev-browser
+   npm install playwright@1.58.2 playwright-core@1.58.2
+   npx playwright install chromium
+   dev-browser stop
+   Vérifie : cat ~/.dev-browser/node_modules/playwright/package.json | jq -r '.version' → doit afficher 1.58.2
+
+3. Crée ~/.local/bin/comet-debug avec le script du guide (src-comet-debug). Rends-le exécutable.
+   Ajoute ~/.local/bin au PATH dans ~/.zshrc si absent.
+
+4. Ajoute dans ~/.claude/CLAUDE.md les directives browser :
+   - Toujours lancer comet-debug avant dev-browser --connect
+   - Mode --connect = session Comet authentifiée (port 9222)
+   - Mode standalone = navigateur managé (sans auth)
+   - Workaround Playwright : re-pin après chaque mise à jour de dev-browser
+
+5. Teste la connexion : comet-debug && dev-browser --connect (lister les onglets).
+
+Contraintes :
+- Comet doit être installé dans /Applications avant ce step.
+- Préserver ~/.zshrc.
+  </script>
+
+  <script type="text/x-code" id="prompt-n8n-content">
+Configure le MCP N8N (via supergateway) + Context7 pour créer et gérer des workflows N8N depuis Claude Code.
+
+ARCHITECTURE : N8N expose nativement un MCP server à /mcp-server/http. On s'y connecte via supergateway
+en mode StreamableHttp. Aucun package n8n-mcp séparé — supergateway fait le pont.
+
+PRÉREQUIS :
+- Instance N8N accessible : https://n8n.kimsufi.automatisia.fr
+- JWT Bearer token : le générer dans N8N → Settings → MCP Server (ou API → Create Token)
+
+Effectue les actions suivantes :
+
+1. Demande à l'utilisateur son JWT Bearer token N8N avant d'écrire quoi que ce soit.
+
+2. Crée ~/.claude/mcp.json si absent : {"mcpServers":{}}
+
+3. Ajoute n8n-mcp via supergateway (merge jq, ne pas écraser l'existant) :
+   jq '.mcpServers["n8n-mcp"] = {
+     "command": "npx",
+     "args": ["-y", "supergateway",
+       "--streamableHttp",
+       "https://n8n.kimsufi.automatisia.fr/mcp-server/http",
+       "--header",
+       "authorization:Bearer <JWT_TOKEN>"
+     ]
+   }' ~/.claude/mcp.json > /tmp/mcp.json && mv /tmp/mcp.json ~/.claude/mcp.json
+
+4. Ajoute Context7 (doc des nœuds N8N à jour) :
+   jq '.mcpServers.context7 = {"command":"npx","args":["-y","@upstash/context7-mcp@latest"]}' \
+     ~/.claude/mcp.json > /tmp/mcp.json && mv /tmp/mcp.json ~/.claude/mcp.json
+
+5. chmod 600 ~/.claude/mcp.json
+
+6. Vérifie : jq '.mcpServers | keys' ~/.claude/mcp.json → doit afficher ["context7", "n8n-mcp"]
+
+7. Ajoute dans ~/.claude/CLAUDE.md les directives N8N :
+   - MCP n8n-mcp (supergateway → https://n8n.kimsufi.automatisia.fr/mcp-server/http)
+   - Workflow : Context7 (doc) → search_nodes → get_node → validate → create_workflow → test
+   - Les 5 patterns : Parent Agent, Prompt Chaining, Routing, Parallelization, Evaluator-Optimizer
+
+8. Relance Claude Code et vérifie /mcp → "n8n-mcp" et "context7" doivent apparaître.
+
+Contraintes :
+- Ne jamais afficher ni logger le JWT token.
+- Ne jamais écrire le JWT dans CLAUDE.md.
+- Préserver mcp.json existant (merge jq uniquement).
+  </script>
+
+  <script type="text/x-code" id="prompt-telegram-content">
+Configure l'accès distant Claude Code via Telegram.
+
+PRÉREQUIS : le plugin telegram@claude-plugins-official doit être installé (module Plugins).
+PRÉREQUIS : avoir créé un bot via @BotFather sur Telegram et noté le token.
+
+Effectue les actions suivantes :
+
+1. Crée ~/.claude/channels/telegram/ avec permissions 700.
+2. Crée ~/.claude/channels/telegram/.env avec TELEGRAM_BOT_TOKEN=<token fourni par l'utilisateur>. Permission 600.
+3. Crée ~/.claude/channels/telegram/access.json en mode pairing initial :
+   {"dmPolicy":"pairing","allowedUsers":[]}
+4. Crée ~/.local/bin/cc avec le script de lancement :
+   #!/usr/bin/env bash
+   exec claude --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official "$@"
+   Rends-le exécutable. Ajoute ~/.local/bin au PATH si absent.
+5. Explique à l'utilisateur la procédure de pairing :
+   a. Lancer cc dans un terminal tmux
+   b. Envoyer un message depuis Telegram → noter le code de pairing
+   c. Exécuter /telegram:access pair <code>
+   d. Passer en mode allowlist avec son user_id Telegram dans access.json
+6. Ajoute dans ~/.claude/CLAUDE.md un rappel : ne jamais stocker le token Telegram en clair dans CLAUDE.md (il est dans .env).
+
+Contraintes :
+- Demander le token Telegram à l'utilisateur avant d'écrire .env.
+- Ne jamais afficher le token dans la console.
+- chmod 600 sur .env obligatoire.
+  </script>
+
+  <script type="text/x-code" id="src-rtk-rewrite">
+#!/usr/bin/env bash
+# rtk-hook-version: 3
+# RTK Claude Code hook — rewrites commands to use rtk for token savings.
+# Requires: rtk >= 0.23.0, jq
+
+if ! command -v jq &>/dev/null; then
+  echo "[rtk] WARNING: jq is not installed. Install: https://jqlang.github.io/jq/download/" >&2
+  exit 0
+fi
+
+if ! command -v rtk &>/dev/null; then
+  echo "[rtk] WARNING: rtk not in PATH. Install: https://github.com/rtk-ai/rtk#installation" >&2
+  exit 0
+fi
+
+CACHE_DIR=${XDG_CACHE_HOME:-$HOME/.cache}
+CACHE_FILE="$CACHE_DIR/rtk-hook-version-ok"
+if [ ! -f "$CACHE_FILE" ]; then
+  RTK_VERSION_RAW=$(rtk --version 2>/dev/null)
+  RTK_VERSION=${RTK_VERSION_RAW#rtk }
+  RTK_VERSION=${RTK_VERSION%% *}
+  if [ -n "$RTK_VERSION" ]; then
+    IFS=. read -r MAJOR MINOR PATCH <<<"$RTK_VERSION"
+    if [ "$MAJOR" -eq 0 ] && [ "$MINOR" -lt 23 ]; then
+      echo "[rtk] WARNING: rtk $RTK_VERSION too old (need >= 0.23.0). Upgrade: cargo install rtk" >&2
+      exit 0
+    fi
+  fi
+  mkdir -p "$CACHE_DIR" 2>/dev/null
+  touch "$CACHE_FILE" 2>/dev/null
+fi
+
+INPUT=$(cat)
+CMD=$(jq -r '.tool_input.command // empty' <<<"$INPUT")
+
+if [ -z "$CMD" ]; then
+  exit 0
+fi
+
+REWRITTEN=$(rtk rewrite "$CMD" 2>/dev/null)
+EXIT_CODE=$?
+
+case $EXIT_CODE in
+  0) [ "$CMD" = "$REWRITTEN" ] && exit 0 ;;
+  1) exit 0 ;;
+  2) exit 0 ;;
+  3) ;;
+  *) exit 0 ;;
+esac
+
+if [ "$EXIT_CODE" -eq 3 ]; then
+  jq -c --arg cmd "$REWRITTEN" \
+    '.tool_input.command = $cmd | {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "updatedInput": .tool_input
+      }
+    }' <<<"$INPUT"
+else
+  jq -c --arg cmd "$REWRITTEN" \
+    '.tool_input.command = $cmd | {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "allow",
+        "permissionDecisionReason": "RTK auto-rewrite",
+        "updatedInput": .tool_input
+      }
+    }' <<<"$INPUT"
+fi
+  </script>
+
+  <script type="text/x-code" id="src-comet-debug">
+#!/bin/bash
+PORT=9222
+
+check_port() {
+  curl -s -o /dev/null -w '%{http_code}' "http://localhost:$PORT/json/version" 2>/dev/null
+}
+
+if [ "$1" = "--status" ]; then
+  if [ "$(check_port)" = "200" ]; then
+    echo "Comet debug port $PORT: active"
+    exit 0
+  else
+    echo "Comet debug port $PORT: inactive"
+    exit 1
+  fi
+fi
+
+if [ "$(check_port)" = "200" ]; then
+  exit 0
+fi
+
+if pgrep -qf "Comet.app/Contents/MacOS/Comet"; then
+  osascript -e 'tell application "Comet" to quit' 2>/dev/null
+  for i in $(seq 1 10); do
+    pgrep -qf "Comet.app/Contents/MacOS/Comet" || break
+    sleep 0.5
+  done
+fi
+
+open -a Comet --args --remote-debugging-port=$PORT
+
+for i in $(seq 1 16); do
+  [ "$(check_port)" = "200" ] && break
+  sleep 0.5
+done
+
+if [ "$(check_port)" = "200" ]; then
+  exit 0
+else
+  echo "Error: Comet debug port $PORT not responding after launch" >&2
+  exit 1
+fi
+  </script>
+
+  <script type="text/x-code" id="src-cc">
+#!/usr/bin/env bash
+# Lance Claude Code avec skip-permissions (remote-control activé via remoteControlAtStartup)
+exec claude --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official "$@"
+  </script>
+
+  <script type="text/x-code" id="src-tmux-ai">
+#!/usr/bin/env bash
+set -euo pipefail
+
+VERSION="1.0.0"
+LAYOUT="solo"
+KILL_EXISTING=0
+ROOT_DIR="${PWD}"
+
+usage() {
+  cat <<'EOF'
+tmux-ai - launch repeatable tmux workspaces for AI development
+
+Usage:
+  tmux-ai [layout] [-k] [--root DIR]
+  tmux-ai --help
+
+Layouts:
+  solo     Claude + shell
+  duo      Claude + Gemini
+  team     Claude + Codex + Gemini + shell
+  monitor  Claude + tests + logs + git
+  review   Claude + diff + shell
+
+Options:
+  -k, --kill       Kill an existing tmux-ai-<layout> session first
+  --root DIR       Start panes in DIR
+  -h, --help       Show this help
+EOF
+}
+
+die() {
+  printf 'tmux-ai: %s\n' "$*" >&2
+  exit 1
+}
+
+need() {
+  command -v "$1" >/dev/null 2>&1 || die "missing command: $1"
+}
+
+pane_send() {
+  local target="$1"
+  local command="$2"
+  tmux send-keys -t "$target" "$command" C-m
+}
+
+new_session() {
+  local session="$1"
+  tmux new-session -d -s "$session" -c "$ROOT_DIR"
+  tmux set-option -t "$session" status on
+  tmux set-option -t "$session" status-left " #S "
+  tmux set-option -t "$session" remain-on-exit on
+}
+
+prepare_session() {
+  local session="$1"
+  if tmux has-session -t "$session" 2>/dev/null; then
+    if [ "$KILL_EXISTING" -eq 1 ]; then
+      tmux kill-session -t "$session"
+    else
+      tmux attach-session -t "$session"
+      exit 0
+    fi
+  fi
+}
+
+attach_session() {
+  local session="$1"
+  if [ -n "${TMUX:-}" ]; then
+    tmux switch-client -t "$session"
+  else
+    tmux attach-session -t "$session"
+  fi
+}
+
+rename_pane() {
+  local target="$1"
+  local title="$2"
+  tmux select-pane -t "$target" -T "$title"
+}
+
+print_context() {
+  local session="$1"
+  tmux new-window -t "$session" -n "context" -c "$ROOT_DIR"
+  pane_send "$session:context.0" "$(banner 'Repository context')"
+  pane_send "$session:context.0" "pwd"
+  pane_send "$session:context.0" "git rev-parse --show-toplevel 2>/dev/null || true"
+  pane_send "$session:context.0" "git status --short 2>/dev/null || true"
+  pane_send "$session:context.0" "find . -maxdepth 2 -type f \\( -name 'CLAUDE.md' -o -name 'package.json' -o -name 'pyproject.toml' -o -name 'README*' \\) -print | sort"
+}
+
+maybe_context_window() {
+  local session="$1"
+  if [ "${TMUX_AI_CONTEXT:-0}" = "1" ]; then
+    print_context "$session"
+  fi
+}
+banner() {
+  local title="$1"
+  printf 'printf "\\033[1;36m%s\\033[0m\\n"\n' "$title"
+}
+
+safe_cmd() {
+  local cmd="$1"
+  local fallback="$2"
+  if command -v "${cmd%% *}" >/dev/null 2>&1; then
+    printf '%s\n' "$cmd"
+  else
+    printf '%s\n' "$fallback"
+  fi
+}
+
+layout_solo() {
+  local session="tmux-ai-solo"
+  prepare_session "$session"
+  new_session "$session"
+  tmux rename-window -t "$session:0" "solo"
+  tmux split-window -t "$session:0" -h -c "$ROOT_DIR"
+  rename_pane "$session:0.0" "Claude"
+  rename_pane "$session:0.1" "Shell"
+  pane_send "$session:0.0" "$(banner 'Claude Code')"
+  pane_send "$session:0.0" "$(safe_cmd 'claude' 'echo claude command not found')"
+  pane_send "$session:0.1" "$(banner 'Shell')"
+  pane_send "$session:0.1" "git status --short || true"
+  tmux select-layout -t "$session:0" even-horizontal
+  tmux select-pane -t "$session:0.0"
+  maybe_context_window "$session"
+  attach_session "$session"
+}
+
+layout_duo() {
+  local session="tmux-ai-duo"
+  prepare_session "$session"
+  new_session "$session"
+  tmux rename-window -t "$session:0" "duo"
+  tmux split-window -t "$session:0" -h -c "$ROOT_DIR"
+  rename_pane "$session:0.0" "Claude"
+  rename_pane "$session:0.1" "Gemini"
+  pane_send "$session:0.0" "$(banner 'Claude implementer')"
+  pane_send "$session:0.0" "$(safe_cmd 'claude' 'echo claude command not found')"
+  pane_send "$session:0.1" "$(banner 'Gemini reviewer')"
+  pane_send "$session:0.1" "$(safe_cmd 'gemini' 'echo gemini command not found')"
+  tmux select-layout -t "$session:0" even-horizontal
+  tmux select-pane -t "$session:0.0"
+  attach_session "$session"
+}
+
+layout_team() {
+  local session="tmux-ai-team"
+  prepare_session "$session"
+  new_session "$session"
+  tmux rename-window -t "$session:0" "team"
+  tmux split-window -t "$session:0" -h -c "$ROOT_DIR"
+  tmux split-window -t "$session:0.0" -v -c "$ROOT_DIR"
+  tmux split-window -t "$session:0.2" -v -c "$ROOT_DIR"
+  rename_pane "$session:0.0" "Claude"
+  rename_pane "$session:0.1" "Codex"
+  rename_pane "$session:0.2" "Gemini"
+  rename_pane "$session:0.3" "Shell"
+  pane_send "$session:0.0" "$(banner 'Claude lead')"
+  pane_send "$session:0.0" "$(safe_cmd 'claude' 'echo claude command not found')"
+  pane_send "$session:0.1" "$(banner 'Codex worker')"
+  pane_send "$session:0.1" "$(safe_cmd 'codex' 'echo codex command not found')"
+  pane_send "$session:0.2" "$(banner 'Gemini critic')"
+  pane_send "$session:0.2" "$(safe_cmd 'gemini' 'echo gemini command not found')"
+  pane_send "$session:0.3" "$(banner 'Shell')"
+  pane_send "$session:0.3" "git status --short || true"
+  tmux select-layout -t "$session:0" tiled
+  tmux select-pane -t "$session:0.0"
+  attach_session "$session"
+}
+
+layout_monitor() {
+  local session="tmux-ai-monitor"
+  prepare_session "$session"
+  new_session "$session"
+  tmux rename-window -t "$session:0" "monitor"
+  tmux split-window -t "$session:0" -h -c "$ROOT_DIR"
+  tmux split-window -t "$session:0.0" -v -c "$ROOT_DIR"
+  tmux split-window -t "$session:0.2" -v -c "$ROOT_DIR"
+  rename_pane "$session:0.0" "Claude"
+  rename_pane "$session:0.1" "Tests"
+  rename_pane "$session:0.2" "Logs"
+  rename_pane "$session:0.3" "Git"
+  pane_send "$session:0.0" "$(banner 'Claude monitor lead')"
+  pane_send "$session:0.0" "$(safe_cmd 'claude' 'echo claude command not found')"
+  pane_send "$session:0.1" "$(banner 'Tests')"
+  pane_send "$session:0.1" "if [ -f package.json ]; then npm test; else echo 'No package.json; run project tests here'; fi"
+  pane_send "$session:0.2" "$(banner 'Logs')"
+  pane_send "$session:0.2" "find . -maxdepth 3 -type f \\( -name '*.log' -o -name 'npm-debug.log*' \\) -print | head -20"
+  pane_send "$session:0.3" "$(banner 'Git watch')"
+  pane_send "$session:0.3" "watch -n 3 'git status --short && echo && git diff --stat'"
+  tmux select-layout -t "$session:0" tiled
+  tmux select-pane -t "$session:0.0"
+  attach_session "$session"
+}
+
+layout_review() {
+  local session="tmux-ai-review"
+  prepare_session "$session"
+  new_session "$session"
+  tmux rename-window -t "$session:0" "review"
+  tmux split-window -t "$session:0" -h -c "$ROOT_DIR"
+  tmux split-window -t "$session:0.1" -v -c "$ROOT_DIR"
+  rename_pane "$session:0.0" "Claude"
+  rename_pane "$session:0.1" "Diff"
+  rename_pane "$session:0.2" "Shell"
+  pane_send "$session:0.0" "$(banner 'Claude reviewer')"
+  pane_send "$session:0.0" "$(safe_cmd 'claude' 'echo claude command not found')"
+  pane_send "$session:0.1" "$(banner 'Diff')"
+  pane_send "$session:0.1" "git diff --stat && git diff -- . ':(exclude)package-lock.json' | sed -n '1,240p'"
+  pane_send "$session:0.2" "$(banner 'Shell')"
+  pane_send "$session:0.2" "git status --short"
+  tmux select-layout -t "$session:0" main-vertical
+  tmux resize-pane -t "$session:0.0" -x 80
+  tmux select-pane -t "$session:0.0"
+  attach_session "$session"
+}
+
+parse_args() {
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      solo|duo|team|monitor|review) LAYOUT="$1" ;;
+      -k|--kill) KILL_EXISTING=1 ;;
+      --root) shift; [ "$#" -gt 0 ] || die "--root requires a directory"; ROOT_DIR="$1" ;;
+      -h|--help) usage; exit 0 ;;
+      --version) echo "$VERSION"; exit 0 ;;
+      *) die "unknown argument: $1" ;;
+    esac
+    shift
+  done
+}
+
+main() {
+  parse_args "$@"
+  need tmux
+  [ -d "$ROOT_DIR" ] || die "root directory does not exist: $ROOT_DIR"
+  ROOT_DIR="$(cd "$ROOT_DIR" && pwd)"
+  case "$LAYOUT" in
+    solo) layout_solo ;;
+    duo) layout_duo ;;
+    team) layout_team ;;
+    monitor) layout_monitor ;;
+    review) layout_review ;;
+    *) die "unknown layout: $LAYOUT" ;;
+  esac
+}
+
+main "$@"
+  </script>
+
+
+</body>
+</html>
