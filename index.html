@@ -6,115 +6,166 @@
   <title>Guide Claude Code - Configuration Philippe AutomatisIA.fr</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..600,0..1,-25..0&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #070c18; --surface: #0f172a; --surface2: #1e293b; --border: #334155;
-      --accent: #0EA5E9; --accent2: #7c3aed; --text: #e2e8f0; --muted: #64748b; --success: #10b981;
-      --warn: #f59e0b; --danger: #ef4444; --header-h: 64px; --side-w: 220px;
+      --bg: #0a0f1c; --surface: #111827; --surface2: #1f2937; --border: #334155;
+      --accent: #38BDF8; --accent2: #A78BFA; --text: #e5e7eb; --muted: #94a3b8; --success: #34d399;
+      --warn: #fbbf24; --danger: #f87171; --header-h: 64px; --side-w: 240px;
+      --shadow-sm: 0 1px 2px 0 rgba(0,0,0,.3);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,.4), 0 2px 4px -2px rgba(0,0,0,.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.5), 0 4px 6px -4px rgba(0,0,0,.4);
+      --radius: 10px; --radius-sm: 6px; --radius-lg: 14px;
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
     [data-theme="light"] {
       --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --border: #e2e8f0;
       --accent: #0284C7; --accent2: #7c3aed; --text: #0f172a; --muted: #64748b; --success: #059669;
+      --shadow-sm: 0 1px 2px 0 rgba(15,23,42,.06);
+      --shadow-md: 0 4px 6px -1px rgba(15,23,42,.08), 0 2px 4px -2px rgba(15,23,42,.05);
+      --shadow-lg: 0 10px 15px -3px rgba(15,23,42,.10), 0 4px 6px -4px rgba(15,23,42,.07);
     }
     @media (prefers-color-scheme: light) {
       [data-theme="system"] {
         --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --border: #e2e8f0;
         --accent: #0284C7; --accent2: #7c3aed; --text: #0f172a; --muted: #64748b; --success: #059669;
+        --shadow-sm: 0 1px 2px 0 rgba(15,23,42,.06);
+        --shadow-md: 0 4px 6px -1px rgba(15,23,42,.08), 0 2px 4px -2px rgba(15,23,42,.05);
+        --shadow-lg: 0 10px 15px -3px rgba(15,23,42,.10), 0 4px 6px -4px rgba(15,23,42,.07);
       }
     }
+    .material-symbols-outlined { font-family: "Material Symbols Outlined"; font-weight: 400; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }
+    .ms-fill { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
+    .nav-icon.material-symbols-outlined { font-size: 20px; color: currentColor; opacity: .9; }
+    .kicker-icon { font-size: 14px; vertical-align: -2px; margin-right: 4px; }
+    .btn-icon { font-size: 18px; vertical-align: -3px; margin-right: 6px; }
+    .btn-arrow { font-size: 18px; vertical-align: -3px; margin-left: 6px; }
     * { box-sizing: border-box; transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease; }
     html, body { height: 100%; }
     body {
-      margin: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0; font-family: var(--font-sans);
       background: var(--bg); color: var(--text); overflow: hidden;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       transition: background-color 200ms ease, color 200ms ease;
     }
     button, input { font: inherit; }
     .topbar {
       position: fixed; inset: 0 0 auto 0; height: var(--header-h); display: flex; align-items: center; justify-content: space-between;
-      padding: 0 22px; background: color-mix(in srgb, var(--surface) 92%, transparent); border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(18px); z-index: 20; transition: background-color 200ms ease, border-color 200ms ease;
+      padding: 0 24px; background: color-mix(in srgb, var(--surface) 86%, transparent); border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      z-index: 20; transition: background-color 200ms ease, border-color 200ms ease;
+      box-shadow: var(--shadow-sm);
     }
-    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .brand-mark { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
-    .brand h1 { margin: 0; font-size: 16px; letter-spacing: 0; }
-    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
-    .theme-switch { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
-    .theme-btn { border: 0; background: transparent; color: var(--muted); border-radius: 6px; padding: 7px 9px; cursor: pointer; min-width: 38px; }
-    .theme-btn.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .brand-mark { width: 38px; height: 38px; border-radius: var(--radius); display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,.18); position: relative; overflow: hidden; }
+    .brand-mark::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,.20), transparent 60%); pointer-events: none; }
+    .brand-mark .material-symbols-outlined { font-size: 22px; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; position: relative; z-index: 1; }
+    .brand h1 { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; letter-spacing: 0; }
+    .theme-switch { display: flex; gap: 2px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 3px; box-shadow: var(--shadow-sm); }
+    .theme-btn { border: 0; background: transparent; color: var(--muted); border-radius: 7px; padding: 6px 9px; cursor: pointer; min-width: 36px; display: grid; place-items: center; transition: all 180ms ease; }
+    .theme-btn:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+    .theme-btn.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: var(--shadow-sm); }
+    .theme-btn .material-symbols-outlined { font-size: 18px; }
     .sidebar {
       position: fixed; left: 0; top: var(--header-h); bottom: 0; width: var(--side-w); overflow-y: auto;
-      background: var(--surface); border-right: 1px solid var(--border); padding: 14px 10px; transition: background-color 200ms ease, border-color 200ms ease;
+      background: color-mix(in srgb, var(--surface) 94%, var(--bg)); border-right: 1px solid var(--border); padding: 16px 12px;
+      transition: background-color 200ms ease, border-color 200ms ease;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
     }
+    .sidebar::-webkit-scrollbar { width: 6px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .memory-children { display: none; margin-left: 22px; padding-left: 10px; border-left: 1px solid var(--border); margin-top: 2px; }
     .nav-item, .memory-head {
-      width: 100%; display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 9px;
-      border: 1px solid transparent; border-radius: 8px; color: var(--text); cursor: pointer; background: transparent; text-align: left;
+      width: 100%; display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 10px;
+      border: 1px solid transparent; border-radius: 9px; color: var(--text); cursor: pointer; background: transparent; text-align: left;
+      font-family: inherit; transition: all 180ms ease;
     }
-    .nav-item:hover, .memory-head:hover { background: var(--surface2); }
-    .nav-item.active { border-color: color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
-    .nav-icon { width: 21px; text-align: center; flex: 0 0 auto; }
-    .nav-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 650; }
-    .nav-count { color: var(--muted); font-size: 12px; font-weight: 700; }
-    .chev { color: var(--muted); transition: transform 200ms ease; }
+    .nav-item:hover, .memory-head:hover { background: color-mix(in srgb, var(--accent) 8%, var(--surface2)); border-color: color-mix(in srgb, var(--border) 70%, transparent); }
+    .nav-item:hover .nav-icon { color: var(--accent); }
+    .nav-item.active { border-color: color-mix(in srgb, var(--accent) 60%, transparent); background: color-mix(in srgb, var(--accent) 16%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent); }
+    .nav-item.active .nav-icon { color: var(--accent); opacity: 1; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+    .nav-icon { width: 22px; text-align: center; flex: 0 0 auto; color: var(--muted); transition: color 180ms ease; }
+    .nav-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; letter-spacing: -0.005em; }
+    .nav-count { color: var(--muted); font-size: 11px; font-weight: 700; padding: 2px 6px; background: var(--surface2); border-radius: 999px; }
+    .nav-item.active .nav-count { color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, transparent); }
+    .chev { color: var(--muted); transition: transform 220ms ease; font-size: 18px !important; }
     .memory-group.open .chev { transform: rotate(90deg); }
-    .memory-children { display: none; margin-left: 18px; padding-left: 8px; border-left: 1px solid var(--border); }
     .memory-group.open .memory-children { display: block; }
-    .side-progress { border-top: 1px solid var(--border); margin-top: 14px; padding: 16px 9px 8px; }
-    .progress-track { height: 8px; border-radius: 999px; background: var(--surface2); overflow: hidden; border: 1px solid var(--border); }
-    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 200ms ease; }
-    .progress-label { margin-top: 9px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .side-progress { border-top: 1px solid var(--border); margin-top: 18px; padding: 18px 10px 8px; }
+    .progress-track { height: 6px; border-radius: 999px; background: var(--surface2); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 220ms ease; border-radius: 999px; }
+    .progress-label { margin-top: 10px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
     .content {
       position: fixed; left: var(--side-w); right: 0; top: var(--header-h); bottom: 0; overflow-y: auto;
       padding: 26px clamp(18px, 4vw, 54px) 54px; scroll-behavior: smooth;
     }
     .module-panel { display: none; max-width: 980px; margin: 0 auto; }
     .module-panel.active { display: block; }
-    .module-hero { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: end; margin-bottom: 22px; }
-    .module-kicker { color: var(--accent); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
-    .module-title { margin: 8px 0 8px; font-size: clamp(30px, 5vw, 52px); letter-spacing: 0; line-height: 1; }
-    .module-desc { margin: 0; color: var(--muted); line-height: 1.6; max-width: 740px; }
-    .module-meter { min-width: 120px; padding: 14px; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; text-align: center; }
-    .module-meter strong { display: block; font-size: 24px; }
-    .steps { display: grid; gap: 12px; }
-    .step { border: 1px solid var(--border); border-radius: 8px; background: var(--surface); overflow: hidden; transition: opacity 200ms ease, background-color 200ms ease, border-color 200ms ease; }
+    .module-hero { display: grid; grid-template-columns: 1fr auto; gap: 22px; align-items: end; margin-bottom: 24px; }
+    .module-kicker { color: var(--accent); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .12em; display: inline-flex; align-items: center; gap: 6px; }
+    .module-title { margin: 10px 0 10px; font-size: clamp(28px, 4.5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.05; }
+    .module-desc { margin: 0; color: var(--muted); line-height: 1.65; max-width: 740px; font-size: 14.5px; }
+    .module-meter { min-width: 120px; padding: 14px 18px; border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); text-align: center; box-shadow: var(--shadow-sm); }
+    .module-meter strong { display: block; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: var(--accent); }
+    .module-meter span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+    .steps { display: grid; gap: 10px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; transition: all 200ms ease; box-shadow: var(--shadow-sm); }
+    .step:hover:not(.locked):not(.done) { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); box-shadow: var(--shadow-md); }
+    .step.expanded { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); box-shadow: var(--shadow-md); }
     .step.locked { opacity: .35; pointer-events: none; }
-    .step.done { background: color-mix(in srgb, var(--success) 12%, var(--surface)); border-color: color-mix(in srgb, var(--success) 45%, var(--border)); }
-    .step-hdr { min-height: 54px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .step-chk { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); flex: 0 0 auto; display: grid; place-items: center; background: var(--surface2); }
+    .step.done { background: color-mix(in srgb, var(--success) 8%, var(--surface)); border-color: color-mix(in srgb, var(--success) 35%, var(--border)); }
+    .step-hdr { min-height: 56px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .step-chk { width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--border); flex: 0 0 auto; display: grid; place-items: center; background: var(--surface2); transition: all 200ms ease; }
+    .step:hover:not(.done) .step-chk { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
     .step.done .step-chk { background: var(--success); border-color: var(--success); color: #fff; }
-    .step.done .step-chk::after { content: "✓"; font-weight: 900; font-size: 14px; }
-    .step-title { flex: 1; font-weight: 750; line-height: 1.3; }
-    .step.done .step-title { text-decoration: line-through; color: color-mix(in srgb, var(--text) 55%, var(--muted)); }
-    .step-badge { display: none; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 850; letter-spacing: .05em; }
+    .step.done .step-chk::after { content: "check"; font-family: "Material Symbols Outlined"; font-weight: 600; font-size: 16px; font-variation-settings: "FILL" 1, "wght" 600; }
+    .step-title { flex: 1; font-weight: 650; font-size: 14.5px; line-height: 1.35; letter-spacing: -0.01em; }
+    .step.done .step-title { text-decoration: line-through; color: color-mix(in srgb, var(--text) 50%, var(--muted)); }
+    .step-badge { display: none; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 999px; padding: 3px 9px; font-size: 10px; font-weight: 700; letter-spacing: .08em; box-shadow: var(--shadow-sm); }
     .step.expanded:not(.done) .step-badge { display: inline-flex; }
-    .step-body { display: none; border-top: 1px solid var(--border); padding: 14px; }
+    .step-body { display: none; border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent); padding: 16px; background: color-mix(in srgb, var(--surface2) 35%, transparent); }
     .step.expanded .step-body { display: block; }
     .step.done:not(.expanded) .step-body { display: none; }
-    .tabs-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .tab-btn { border: 1px solid var(--border); background: var(--surface2); color: var(--muted); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-weight: 700; font-size: 13px; }
-    .tab-btn.active { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
-    .tab-pane { display: none; color: var(--text); line-height: 1.65; }
+    .tabs-bar { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px; padding: 4px; background: var(--surface2); border-radius: 9px; width: fit-content; }
+    .tab-btn { border: 0; background: transparent; color: var(--muted); border-radius: 7px; padding: 7px 14px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 12.5px; letter-spacing: -0.005em; transition: all 180ms ease; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); background: var(--surface); box-shadow: var(--shadow-sm); }
+    .tab-pane { display: none; color: var(--text); line-height: 1.65; font-size: 14px; }
     .tab-pane.visible { display: block; }
     .tab-pane p { margin: 0 0 12px; }
     .tab-pane ul { margin: 0 0 12px 18px; padding: 0; }
-    .tab-pane li { margin: 5px 0; }
-    .code-wrap { position: relative; margin: 10px 0 14px; }
+    .tab-pane li { margin: 6px 0; }
+    .code-wrap { position: relative; margin: 12px 0 16px; }
     .code-block, .prompt-text {
       margin: 0; white-space: pre-wrap; word-break: break-word; overflow-x: auto;
-      background: #020617; color: #e2e8f0; border: 1px solid #1e293b; border-radius: 8px;
-      padding: 14px; font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #0b1220; color: #e2e8f0; border: 1px solid #1e293b; border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      padding: 16px 18px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6;
     }
     .copy-btn, .copy-prompt-btn {
-      position: absolute; right: 9px; top: 9px; border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
-      background: color-mix(in srgb, var(--accent) 18%, #020617); color: #e0f2fe; border-radius: 7px; padding: 6px 9px; cursor: pointer; font-size: 12px; font-weight: 800;
+      position: absolute; right: 10px; top: 10px; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+      background: color-mix(in srgb, var(--accent) 18%, #0b1220); color: #e0f2fe; border-radius: 7px; padding: 6px 11px; cursor: pointer; font-family: inherit; font-size: 11.5px; font-weight: 700; letter-spacing: -0.005em; transition: all 180ms ease;
     }
-    .copy-prompt-btn { position: static; margin-top: 10px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: 0; }
-    .claude-btn { margin: 18px 0 12px; border: 0; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; padding: 11px 14px; cursor: pointer; font-weight: 850; }
-    .prompt-panel { display: none; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 14px; margin-bottom: 20px; }
+    .copy-btn:hover, .copy-prompt-btn:hover { background: color-mix(in srgb, var(--accent) 30%, #0b1220); transform: translateY(-1px); }
+    .copy-prompt-btn { position: static; margin-top: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: 0; padding: 9px 14px; font-size: 13px; }
+    .claude-btn { margin: 18px 0 14px; border: 0; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: var(--radius); padding: 12px 18px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 14px; letter-spacing: -0.005em; display: inline-flex; align-items: center; box-shadow: var(--shadow-md); transition: all 200ms ease; }
+    .claude-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .claude-btn:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+    .prompt-panel { display: none; border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 22px; box-shadow: var(--shadow-sm); }
     .prompt-panel.open { display: block; }
     .prompt-note { margin: 0 0 10px; color: var(--muted); }
     .tip { border-left: 3px solid var(--accent); background: var(--surface2); border-radius: 0 8px 8px 0; padding: 10px 12px; color: var(--text); margin: 12px 0; }
+    .module-purpose { display: flex; gap: 16px; align-items: flex-start; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border)); border-left: 4px solid var(--accent); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--surface)) 0%, var(--surface) 75%); border-radius: 0 var(--radius) var(--radius) 0; padding: 18px 20px; margin: 0 0 24px; box-shadow: var(--shadow-sm); }
+    .module-purpose .purpose-icon { font-size: 22px; flex: 0 0 auto; line-height: 1.3; color: var(--accent); margin-top: 2px; }
+    .module-purpose .purpose-text { flex: 1; min-width: 0; }
+    .module-purpose .purpose-head { font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+    .module-purpose .purpose-text p { margin: 0 0 10px; line-height: 1.6; color: var(--text); font-size: 14px; }
+    .module-purpose .purpose-text p:last-child { margin: 0; }
+    .module-purpose .purpose-text strong { color: var(--accent); font-weight: 700; }
     .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
     @media (max-width: 760px) {
       body { overflow: auto; }
@@ -128,16 +179,16 @@
 <body data-theme="dark">
   <header class="topbar">
     <div class="brand">
-      <div class="brand-mark">CC</div>
+      <div class="brand-mark"><span class="material-symbols-outlined">terminal</span></div>
       <div>
         <h1>Configuration Claude Code</h1>
         <p>Guide interactif pour reproduire l'environnement de Philippe AutomatisIA.fr</p>
       </div>
     </div>
     <div class="theme-switch" aria-label="Theme">
-      <button class="theme-btn" data-theme-choice="dark" title="Theme sombre">☾</button>
-      <button class="theme-btn" data-theme-choice="light" title="Theme clair">☼</button>
-      <button class="theme-btn" data-theme-choice="system" title="Theme systeme">SYS</button>
+      <button class="theme-btn" data-theme-choice="dark" title="Theme sombre" aria-label="Theme sombre"><span class="material-symbols-outlined">dark_mode</span></button>
+      <button class="theme-btn" data-theme-choice="light" title="Theme clair" aria-label="Theme clair"><span class="material-symbols-outlined">light_mode</span></button>
+      <button class="theme-btn" data-theme-choice="system" title="Theme système" aria-label="Theme système"><span class="material-symbols-outlined">settings_brightness</span></button>
     </div>
   </header>
   <aside class="sidebar" id="sidebar"></aside>
@@ -146,74 +197,92 @@
 
   <script>
     const MODULES = [
-      { id: "base", icon: "⚙️", short: "Installation de base", title: "Installation de base", desc: "Installe les fondations macOS: Homebrew, outils CLI, Claude Code et Comet.", steps: [
+      { id: "base", icon: "build", short: "Installation de base", title: "Installation de base", desc: "Installe les fondations macOS: Homebrew, outils CLI, Claude Code et Comet.", purpose: ["Tout ce qui suit suppose que ces outils sont installés. Sans Homebrew, jq, git, node ou Claude Code, les modules suivants échoueront en cascade — pas de hooks, pas de plugins, pas de mémoire interrogeable.", "**Le gain** : zéro friction technique pour activer toutes les optimisations qui viennent ensuite. Compte 10-15 minutes une fois pour toutes."], steps: [
         { title: "Installer Homebrew", concept: ["Homebrew est le gestionnaire de paquets macOS standard.", "Il permet d'installer git, node, jq, tmux et RTK avec des commandes reproductibles."], commandes: ["/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""], verify: ["brew --version"] },
         { title: "Installer les outils de base", concept: ["git gere le versioning, node fournit npm et l'ecosysteme JavaScript, jq parse le JSON des hooks, tmux organise les sessions multi-agents."], commandes: ["brew install git node jq tmux"], verify: ["git --version && node --version && jq --version && tmux -V"] },
         { title: "Installer Claude Code CLI", concept: ["Le CLI officiel d'Anthropic lit sa configuration dans ~/.claude/.", "L'option --dangerously-skip-permissions sera isolee dans un wrapper dedie pour l'acces distant via Telegram."], commandes: ["npm install -g @anthropic-ai/claude-code"], verify: ["claude --version"] },
         { title: "Installer Comet browser", concept: ["Comet est un navigateur Chromium modifie utilise comme base de l'automatisation browser avec dev-browser.", "Il exposera un port de debug local 9222 que le script comet-debug peut ouvrir automatiquement."], commandes: ["# Telecharge Comet depuis https://www.comet.so puis glisse Comet.app dans /Applications"], verify: ["ls /Applications/Comet.app && echo \"✓ Comet installe\""] }
       ]},
-      { id: "rtk", icon: "🪙", short: "Tokens — RTK", title: "Gestion des tokens — RTK", desc: "Réduit les tokens consommés par les commandes shell de 60–90 % grâce à des variantes compactes transparentes. Inclut /advisor, le reviewer Opus indépendant qui valide les approches avant d'implémenter.", steps: [
-        { title: "Installer RTK", concept: ["RTK (Rust Token Killer) réécrit les commandes shell de Claude Code en variantes compactes.", "Résultat : 60-90% de tokens économisés sur git, ls, grep, npm. Transparent — aucune action manuelle pendant les sessions.", "Prérequis : jq doit être installé (brew install jq).", "Repo : https://github.com/PsychoLlama/rtk — installation via cargo ou Homebrew selon disponibilité."], commandes: ["# Via Homebrew (si disponible) :\nbrew install rtk\n\n# Ou via Cargo (Rust) :\ncargo install rtk\n\nrtk --version"], verify: ["rtk --version && which rtk && jq --version"] },
+      { id: "statusline", icon: "speed", short: "Statusline", title: "Statusline custom", desc: "Statusline dense en une ligne : modèle · cwd · projet · git · ctx % avec barre + (200k) · 5h % · 7d % · cost · durée · ±lignes. Lit le JSON envoyé par Claude Code à chaque rendu.", purpose: ["Sans statusline custom, tu ne vois ni la consommation contexte, ni les rate limits 5h/7d (Pro/Max), ni le coût cumulé de la session. Tu découvres trop tard que tu as brûlé ton quota ou que ta session est saturée.", "**Le gain** : visibilité en temps réel — tu sais quand /clear (à ~70% contexte), quand ralentir (rate limit qui monte), et quand un agent a coûté plus que prévu. L'info que tu cherchais via /status est désormais permanente."], steps: [
+        { title: "Concept : ce que la statusline lit et affiche", concept: ["Claude Code passe à chaque rendu un JSON sur stdin avec les champs : model.display_name, workspace.current_dir, workspace.project_dir, context_window.{used_percentage,context_window_size}, rate_limits.{five_hour,seven_day}.used_percentage, cost.{total_cost_usd,total_duration_ms,total_lines_added,total_lines_removed}.", "Le script bash parse ce JSON avec jq et compose une ligne dense avec couleurs ANSI et barres de progression unicode (▓ / ░).", "Champs affichés (séparés par ' · ') : modèle (cyan bold) · cwd abrégé en ~/ (bleu) · proj: <name> si différent du cwd (gris) · git branch + * si dirty (vert) · ctx % avec barre + taille de contexte (jaune) · 5h % avec barre (magenta) · 7d % avec barre (rouge) · coût $ (vert) · durée (dim) · ±lignes (cyan).", "Avantage : tu vois en permanence la consommation contexte, les rate limits 5h/7d (utiles sur Pro/Max), le coût cumulé. Pas besoin de /status."]},
+        { title: "Créer le script ~/.claude/statusline.sh", concept: ["Prérequis : jq installé (brew install jq), git présent, locale C en tête de script (export LC_ALL=C — sinon printf '%.2f' échoue avec LC_NUMERIC=fr_FR sur le coût).", "Le script doit écrire UNE seule ligne par invocation, exécutable (chmod +x).", "Pour macOS, attention au backslash dans la substitution paramètre tilde (utiliser ${var/#$HOME/~} sans escape)."], commandes: ["mkdir -p ~/.claude\n# Copier le contenu de src-statusline ci-dessous dans :\n#   ~/.claude/statusline.sh\nchmod +x ~/.claude/statusline.sh\n\n# Test à sec avec un payload factice :\necho '{\"model\":{\"display_name\":\"Sonnet\"},\"workspace\":{\"current_dir\":\"'$PWD'\"},\"context_window\":{\"used_percentage\":42,\"context_window_size\":200000},\"cost\":{\"total_cost_usd\":1.23,\"total_duration_ms\":75000,\"total_lines_added\":12,\"total_lines_removed\":3}}' | ~/.claude/statusline.sh"], verify: ["test -x ~/.claude/statusline.sh && echo '✓ statusline exécutable'"], src: "src-statusline" },
+        { title: "Activer dans settings.json", concept: ["settings.json déclare la statusLine via une commande shell. Claude Code l'invoque à chaque rendu et lit la première ligne stdout.", "Format : { \"statusLine\": { \"type\": \"command\", \"command\": \"<chemin absolu>\" } }."], commandes: ["S=~/.claude/settings.json\n[ ! -f \"$S\" ] && echo '{}' > \"$S\"\njq --arg cmd \"$HOME/.claude/statusline.sh\" '.statusLine = {\"type\":\"command\",\"command\":$cmd}' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\""], verify: ["jq '.statusLine' ~/.claude/settings.json"] }
+      ]},
+      { id: "rtk", icon: "savings", short: "Tokens — RTK", title: "Gestion des tokens — RTK", desc: "Réduit les tokens consommés par les commandes shell de 60–90 % grâce à des variantes compactes transparentes. Inclut /advisor, le reviewer Opus indépendant qui valide les approches avant d'implémenter.", purpose: ["Les commandes shell (git, ls, grep, npm) consomment beaucoup de tokens via leurs sorties verbeuses qui finissent dans le contexte. RTK les réécrit en variantes compactes, transparentes pour Claude — 60 à 90 % d'économie sur les opérations de dev courantes.", "**Le gain** : sessions 3-5× plus longues sans /compact, et /advisor (un reviewer Opus indépendant qui voit toute la conversation) qui valide les approches AVANT 300 lignes de code raté. Un appel /advisor coûte souvent 10× moins qu'un refactoring après-coup."], steps: [
+        { title: "Installer RTK", concept: ["RTK (Rust Token Killer) réécrit les commandes shell de Claude Code en variantes compactes.", "Résultat : 60-90% de tokens économisés sur git, ls, grep, npm. Transparent — aucune action manuelle pendant les sessions.", "Prérequis : jq doit être installé (brew install jq).", "Repo : https://github.com/rtk-ai/rtk — installation via cargo ou Homebrew selon disponibilité."], commandes: ["# Via Homebrew (si disponible) :\nbrew install rtk\n\n# Ou via Cargo (Rust) :\ncargo install rtk\n\nrtk --version"], verify: ["rtk --version && which rtk && jq --version"] },
         { title: "Installer le hook de reecriture", concept: ["Le hook PreToolUse lit la commande Bash demandee par Claude, appelle rtk rewrite, puis renvoie une entree corrigee a Claude Code.", "Les erreurs RTK sont non bloquantes: le workflow continue avec la commande originale."], commandes: ["mkdir -p ~/.claude/hooks", "pbpaste > ~/.claude/hooks/rtk-rewrite.sh", "chmod +x ~/.claude/hooks/rtk-rewrite.sh"], verify: ["~/.claude/hooks/rtk-rewrite.sh < /dev/null || true"], src: "src-rtk-rewrite" },
         { title: "Declarer le hook dans settings.json", concept: ["Claude Code charge les hooks depuis ~/.claude/settings.json.", "Le matcher Bash limite cette reecriture aux commandes shell."], commandes: ["jq '.hooks.PreToolUse += [{\"matcher\":\"Bash\",\"hooks\":[{\"type\":\"command\",\"command\":\"$HOME/.claude/hooks/rtk-rewrite.sh\"}]}]' ~/.claude/settings.json > /tmp/cc-settings.json && mv /tmp/cc-settings.json ~/.claude/settings.json"], verify: ["jq '.hooks.PreToolUse' ~/.claude/settings.json"] },
         { title: "/advisor — second regard Opus indépendant", concept: ["advisor() (ou /advisor dans le prompt Claude Code) invoque Claude Opus comme reviewer indépendant sur la session en cours.", "Il voit l'intégralité de la conversation : chaque outil appelé, chaque résultat, chaque décision prise — sans le biais du travail en cours.", "À invoquer AVANT de s'engager sur une approche complexe, AVANT de déclarer une tâche terminée, et quand on est bloqué depuis plus d'un échange.", "Lien direct avec les tokens : valider l'approche AVANT d'implémenter 300 lignes évite les refactorings coûteux. Un appel Opus économise souvent 10× plus qu'il ne consomme.", "Configuré automatiquement via advisorModel: 'opus' dans settings.json — installé dans le module Plugins. Aucune action supplémentaire."], commandes: ["# Dans Claude Code, à tout moment :\n# advisor()\n#\n# ou taper dans le prompt :\n# /advisor\n\n# Moments clés pour l'invoquer :\n# - Avant de choisir une architecture\n# - Avant de déclarer 'c'est terminé'\n# - Quand un bug résiste depuis 2+ échanges"], verify: ["jq '.advisorModel' ~/.claude/settings.json"] }
       ]},
-      { id: "memory-md", icon: "🧠", short: "Fichiers .md", title: "Mémoire — Fichiers .md", desc: "Pose une mémoire lisible par humains. CLAUDE.md pour les règles comportementales courtes, MEMORY.md comme index chargé à la demande pour alléger le contexte.", steps: [
+      { id: "memory-md", group: "memory", icon: "description", short: "Fichiers .md", title: "Mémoire — Fichiers .md", desc: "Pose une mémoire lisible par humains. CLAUDE.md pour les règles comportementales courtes, MEMORY.md comme index chargé à la demande pour alléger le contexte.", purpose: ["Sans CLAUDE.md, Claude oublie tes préférences à chaque session — tu réexpliques les mêmes règles (langue, style, conventions) à chaque démarrage. Sans MEMORY.md indexé via @MEMORY.md, tout part dans le contexte au démarrage et l'asphyxie même quand l'info n'est pas pertinente pour la tâche.", "**Le gain** : tes règles persistent et sont chargées automatiquement, mais les détails projet (architecture, credentials, décisions) ne pèsent dans le contexte que quand Claude en a besoin. Le contexte reste léger même sur un projet documenté en profondeur."], steps: [
         { title: "Creer la memoire globale", concept: ["~/.claude/CLAUDE.md contient les preferences valables dans tous les projets.", "Elle doit rester courte, concrete et orientee comportement.", "⚠️ La commande ci-dessous crée le fichier seulement s'il n'existe pas encore. Si tu en as déjà un, ajoute les lignes manuellement."], commandes: ["mkdir -p ~/.claude\n# Créer uniquement si absent (ne pas écraser)\n[ ! -f ~/.claude/CLAUDE.md ] && cat > ~/.claude/CLAUDE.md <<'EOF'\n# Preferences globales\n- Repondre en francais sauf demande contraire.\n- Lire le code avant de proposer une modification.\n- Preferer rg pour chercher et des patches scopes.\nEOF\n[ -f ~/.claude/CLAUDE.md ] && echo '✓ ~/.claude/CLAUDE.md existe' || echo '✗ erreur'"], verify: ["sed -n '1,20p' ~/.claude/CLAUDE.md"] },
         { title: "Ajouter une memoire projet", concept: ["Un fichier CLAUDE.md a la racine d'un depot specialise les regles pour ce projet.", "Il prime sur les habitudes generales quand il documente une contrainte locale.", "Les commandes utilisent >> (append) — elles n'écrasent pas le contenu existant."], commandes: ["# Si CLAUDE.md n'existe pas encore dans ce projet :\n[ ! -f CLAUDE.md ] && printf '# Mémoire projet\\n' > CLAUDE.md\n\n# Ajouter les sections utiles (append — ne pas écraser) :\ncat >> CLAUDE.md <<'EOF'\n\n## Configuration\n- Commande de test : npm test\n- Style : conserver les composants existants.\n- Ne pas modifier les migrations sans demande explicite.\nEOF"], verify: ["test -f CLAUDE.md && sed -n '1,20p' CLAUDE.md"] },
         { title: "Organiser les notes longues", concept: ["Les notes volumineuses restent dans Docs/ ou .claude/memories/ pour ne pas saturer CLAUDE.md.", "CLAUDE.md peut pointer vers ces fichiers quand ils sont utiles."], commandes: ["mkdir -p Docs .claude/memories", "printf '# Decisions\\n\\n- 2026-04-15: initialisation memoire.\\n' > .claude/memories/decisions.md"], verify: ["find .claude/memories -maxdepth 1 -type f -name '*.md' -print"] },
         { title: "Stratégie de split CLAUDE.md / MEMORY.md", concept: ["Problème : si tout est dans CLAUDE.md, le contexte grossit à chaque session — même les informations non pertinentes pour la tâche en cours.", "Solution : CLAUDE.md contient UNIQUEMENT les règles comportementales actives (< 200 lignes). Les détails projet vont dans MEMORY.md, chargé à la demande via la directive @MEMORY.md.", "Règle de split : une règle comportementale → CLAUDE.md. Un fait projet, une credential, une décision architecturale, une note de déploiement → fichier lié dans MEMORY.md.", "Exemple : CLAUDE.md contient '- Répondre en français' et '@~/.claude/memory/MEMORY.md'. MEMORY.md contient l'index vers decisions.md, stack.md, credentials.md.", "Résultat : Claude ne charge que ce dont il a besoin. Le contexte reste léger même sur des projets documentés en profondeur."], commandes: ["# 1. Créer l'index MEMORY.md du projet\nPROJ=$(basename $PWD)\nMEM_DIR=~/.claude/projects/$PROJ/memory\nmkdir -p \"$MEM_DIR\"\ncat > \"$MEM_DIR/MEMORY.md\" <<'EOF'\n# Mémoire Projet — Index\n\n## Stack & Architecture\n- [Stack](stack.md)\n\n## Décisions\n- [Décisions](decisions.md)\n\n## Déploiement\n- [Déploiement](deployment.md)\nEOF\n\n# 2. Référencer MEMORY.md depuis CLAUDE.md global\ngrep -q 'MEMORY.md' ~/.claude/CLAUDE.md || \\\n  echo \"\\n# Mémoire projet active\\n@$MEM_DIR/MEMORY.md\" >> ~/.claude/CLAUDE.md\n\necho '✓ Split CLAUDE.md / MEMORY.md configuré'"], verify: ["grep 'MEMORY.md' ~/.claude/CLAUDE.md && echo '✓ référence OK' || echo '✗ référence manquante'"] }
       ]},
-      { id: "memory-sqlite", icon: "🧠", short: "SQLite", title: "Mémoire — SQLite", desc: "Ajoute une memoire structuree locale pour decisions, snippets, preferences et recherches.", steps: [
+      { id: "memory-sqlite", group: "memory", icon: "database", short: "SQLite", title: "Mémoire — SQLite", desc: "Ajoute une memoire structuree locale pour decisions, snippets, preferences et recherches.", purpose: ["Markdown excelle pour la narration et les guides. Mais les faits atomiques (une préférence de style, une décision datée, un snippet réutilisable) y sont noyés dans la prose. SQLite les rend interrogeables : `cc-mem get <mot>` retrouve instantanément au lieu de relire 200 lignes de doc.", "**Le gain** : Claude trouve une décision passée en 1 commande au lieu de spéculer ou de relire la doc. Idéal pour les préférences cross-projets, les snippets fréquents, les décisions architecturales avec leur date."], steps: [
         { title: "Installer sqlite et creer le dossier", concept: ["SQLite donne une memoire locale robuste, rapide et sans serveur.", "Elle complete les fichiers Markdown pour les donnees interrogeables."], commandes: ["brew install sqlite", "mkdir -p ~/.claude/memory"], verify: ["sqlite3 --version && test -d ~/.claude/memory"] },
         { title: "Initialiser le schema", concept: ["Une table memories simple suffit: type, cle, valeur, tags et dates.", "Le couple type/key evite les doublons accidentels."], commandes: ["sqlite3 ~/.claude/memory/philippe.db <<'SQL'\nCREATE TABLE IF NOT EXISTS memories (\n  id INTEGER PRIMARY KEY,\n  type TEXT NOT NULL,\n  key TEXT NOT NULL,\n  value TEXT NOT NULL,\n  tags TEXT DEFAULT '',\n  created_at TEXT DEFAULT CURRENT_TIMESTAMP,\n  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE(type, key)\n);\nSQL"], verify: ["sqlite3 ~/.claude/memory/philippe.db '.schema memories'"] },
         { title: "Ajouter des commandes utilitaires", concept: ["Un petit script cc-mem rend la memoire utilisable depuis Claude Code sans requetes manuelles."], commandes: ["cat > ~/.claude/cc-mem <<'EOF'\n#!/usr/bin/env bash\nDB=\"$HOME/.claude/memory/philippe.db\"\ncase \"$1\" in\n  add) sqlite3 \"$DB\" \"INSERT OR REPLACE INTO memories(type,key,value,tags,updated_at) VALUES('$2','$3','$4','${5:-}',CURRENT_TIMESTAMP);\" ;;\n  list) sqlite3 -header -column \"$DB\" \"SELECT type,key,tags,updated_at FROM memories ORDER BY updated_at DESC LIMIT 40;\" ;;\n  get) sqlite3 -line \"$DB\" \"SELECT * FROM memories WHERE key LIKE '%$2%' OR tags LIKE '%$2%';\" ;;\n  *) echo \"usage: cc-mem add type key value [tags] | list | get query\" ;;\nesac\nEOF\nchmod +x ~/.claude/cc-mem"], verify: ["~/.claude/cc-mem list"] },
         { title: "Documenter l'usage pour Claude", concept: ["SQLite excelle pour les données atomiques : une préférence = une ligne, une décision = une ligne, un snippet = une ligne. Pas de paragraphes — des faits.", "Quand utiliser SQLite vs Markdown : SQLite pour les données interrogeables (recherche par mot-clé, filtrage par type, tri par date). Markdown pour la narration, les décisions argumentées, les guides.", "Claude doit consulter SQLite quand il cherche une préférence de style, une décision passée, un snippet réutilisable — AVANT de faire des hypothèses.", "Types utiles en pratique : 'pref' (préférences de style/comportement), 'decision' (choix architecturaux datés), 'snippet' (commandes fréquentes), 'credential' (références — jamais les valeurs), 'note' (observations de session)."], commandes: ["cat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## Mémoire SQLite (~/.claude/cc-mem)\nSQLite stocke des données atomiques interrogeables — une ligne = un fait précis.\n\nQuand consulter :\n- Avant toute décision de style ou d'architecture : ~/.claude/cc-mem get <mot-clé>\n- Pour lister les décisions récentes : ~/.claude/cc-mem list\n- En début de session sur un projet connu : ~/.claude/cc-mem get <nom-projet>\n\nTypes de données stockées :\n- pref : préférences (ex: type=pref key=lang value=français)\n- decision : choix datés (ex: type=decision key=orm value='Prisma — 2026-04')\n- snippet : commandes réutilisables\n- note : observations de session\n\nNe jamais stocker : mots de passe, tokens, clés API (utiliser les fichiers curated).\nEOF"], verify: ["grep -n \"Mémoire SQLite\" ~/.claude/CLAUDE.md"] }
       ]},
-      { id: "memory-claudemem", icon: "🧠", short: "claude-mem", title: "Mémoire — claude-mem", desc: "Installe un workflow de memoire plus automatique pour capturer et retrouver les informations utiles.", steps: [
+      { id: "memory-claudemem", group: "memory", icon: "neurology", short: "claude-mem", title: "Mémoire — claude-mem", desc: "Installe un workflow de memoire plus automatique pour capturer et retrouver les informations utiles.", purpose: ["Toutes les découvertes de session (bugs résolus, patterns trouvés, décisions techniques implicites) disparaissent à `/exit`. Sans capture automatique, tu retombes dans le même piège la session suivante et tu re-débogues le même bug.", "**Le gain** : capture automatique via hooks (tu ne touches jamais à l'outil), recherche sémantique cross-sessions ('avons-nous déjà vu ce bug ?', 'qu'a-t-on fait la dernière fois sur X ?'), timeline chronologique. Compense l'amnésie inter-sessions de Claude."], steps: [
         { title: "Installer claude-mem", concept: ["claude-mem automatise la capture de souvenirs developpeur et leur recherche.", "Il est utile pour les preferences frequentes, les decisions projet et les raccourcis."], commandes: ["npm install -g claude-mem"], verify: ["claude-mem --version || npx claude-mem --version"] },
         { title: "Initialiser le stockage", concept: ["L'initialisation cree le dossier de donnees et la configuration locale.", "Garde ce stockage dans le home pour le partager entre projets."], commandes: ["claude-mem init --dir ~/.claude/claude-mem"], verify: ["test -d ~/.claude/claude-mem && find ~/.claude/claude-mem -maxdepth 2 -type f | head"] },
         { title: "Ajouter des alias pratiques", concept: ["Des alias courts encouragent l'usage reel: memoriser, chercher, lister.", "Le but est de rendre la memoire plus rapide qu'une note manuelle."], commandes: ["cat >> ~/.zshrc <<'EOF'\nalias cm-add='claude-mem add'\nalias cm-find='claude-mem search'\nalias cm-list='claude-mem list'\nEOF"], verify: ["tail -n 5 ~/.zshrc"] },
         { title: "Relier claude-mem a CLAUDE.md", concept: ["Claude doit utiliser claude-mem quand une information semble deja avoir ete decidee.", "La recherche memoire doit preceder les hypotheses sur les preferences personnelles."], commandes: ["cat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## claude-mem\n- Avant une decision de style ou d'architecture personnelle, chercher avec claude-mem search.\n- Ajouter les preferences stables avec claude-mem add.\nEOF"], verify: ["grep -n \"claude-mem\" ~/.claude/CLAUDE.md"] }
       ]},
-      { id: "memory-coord", icon: "🧠", short: "Coordination mémoire", title: "Mémoire — Coordination des 3 briques", desc: "Directives précises pour que Claude orchestre les 3 briques de mémoire de façon optimale : quand lire quoi, quand écrire où, comment éviter les doublons.", steps: [
+      { id: "memory-coord", group: "memory", icon: "hub", short: "Coordination mémoire", title: "Mémoire — Coordination des 3 briques", desc: "Directives précises pour que Claude orchestre les 3 briques de mémoire de façon optimale : quand lire quoi, quand écrire où, comment éviter les doublons.", purpose: ["3 systèmes de mémoire (fichiers curatés, SQLite, claude-mem) = 3 risques de duplication, 3 risques d'inconsistance. Sans règles de routage, Claude réécrit la même info 3 fois ou cherche au mauvais endroit, et l'utilisateur ne sait plus où est la source de vérité.", "**Le gain** : une table de décision claire dans CLAUDE.md — Claude sait OÙ chercher (et écrire) selon le type d'info, sans hésitation. Le système devient cohérent au lieu de redondant."], steps: [
         { title: "Vue d'ensemble : 3 briques complémentaires", concept: ["Brique 1 — Fichiers curatés (CLAUDE.md + MEMORY.md + fichiers liés) : source de vérité pour les règles comportementales, credentials, architecture, feedback corrections. Persistance longue. Édition manuelle ou par Claude.", "Brique 2 — SQLite (cc-mem) : données atomiques et interrogeables — préférences, décisions datées, snippets, notes de session. Requêtes par mot-clé, type ou date.", "Brique 3 — claude-mem (SQLite + ChromaDB) : capture automatique via hooks. Historique de sessions, observations, découvertes, corrections de bugs. Recherche sémantique.", "Règle de non-duplication : ne jamais stocker le même fait dans deux briques. Si c'est dans MEMORY.md, ne pas répliquer dans SQLite. Si c'est capturé par claude-mem, ne pas l'écrire manuellement."] },
         { title: "Table de routage : quoi va où", concept: ["→ Stack, ports, URLs, credentials du projet → fichiers curatés (MEMORY.md → stack.md, credentials.md)", "→ Règles comportementales actives → CLAUDE.md (court, < 200 lignes)", "→ Préférence de style atomique → SQLite (cc-mem add pref <key> <valeur>)", "→ Décision architecturale avec date → SQLite (cc-mem add decision <key> <valeur>)", "→ 'Qu'avons-nous fait la dernière fois sur X ?' → claude-mem timeline", "→ 'Avons-nous déjà vu ce bug ?' → claude-mem search <symptôme>", "→ Historique de session, découvertes → automatique (claude-mem via hooks — ne rien faire)", "→ Credentials et tokens → fichiers curatés UNIQUEMENT (jamais dans claude-mem ni SQLite)"], commandes: ["# Tableau de routage à ajouter dans CLAUDE.md :\ncat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## Coordination mémoire — Table de routage\n| Besoin | Brique | Action |\n|---|---|---|\n| Stack, ports, URLs projet | Fichiers curatés | Lire MEMORY.md → fichier lié |\n| Règle comportementale | CLAUDE.md | Courte, concrète |\n| Préférence de style | SQLite | cc-mem get <mot> |\n| Décision datée | SQLite | cc-mem get <projet> |\n| 'Que s'est-il passé la dernière fois ?' | claude-mem | claude-mem timeline |\n| Bug déjà rencontré | claude-mem | claude-mem search <symptôme> |\n| Credentials/tokens | Fichiers curatés | Jamais ailleurs |\nEOF"], verify: ["grep -A8 'Table de routage' ~/.claude/CLAUDE.md"] },
         { title: "Directives Claude : quand lire la mémoire", concept: ["Claude doit vérifier la mémoire AVANT de faire des hypothèses sur les préférences ou décisions passées.", "Ordre de lecture : (1) CLAUDE.md chargé au démarrage. (2) @MEMORY.md si référencé. (3) cc-mem get <mot> si une préférence semble manquer. (4) claude-mem search pour l'historique.", "Ne jamais consulter toutes les briques à chaque réponse — seulement quand une information semble pertinente et absente du contexte actuel.", "Signal pour consulter : phrase comme 'habituellement', 'comme avant', 'quelle est ta préférence', 'avons-nous déjà fait ça'."], commandes: ["cat >> ~/.claude/CLAUDE.md <<'EOF'\n\n## Directives lecture mémoire\nAvant de formuler une hypothèse sur une préférence ou décision passée :\n1. Vérifier le contexte chargé (CLAUDE.md + @MEMORY.md)\n2. Si absent : cc-mem get <mot-clé>\n3. Si historique demandé : claude-mem search <terme> ou claude-mem timeline\nNe pas interroger toutes les briques systématiquement — seulement si manque détecté.\nEOF"], verify: ["grep -n 'Directives lecture' ~/.claude/CLAUDE.md"] },
         { title: "Directives Claude : quand écrire en mémoire", concept: ["Claude écrit en mémoire sur demande explicite ('retiens que', 'note ça', 'remember') ou quand il détecte une correction de comportement (feedback).", "Mémoire curatée (fichiers) : user preferences, feedback corrections, architecture projet. Écrite avec Write/Edit — visible et auditable.", "SQLite : faits atomiques stables. Écrit avec cc-mem add — rapide, interrogeable.", "claude-mem : capturé automatiquement via hooks. Claude ne l'écrit jamais manuellement.", "Ne jamais dupliquer : si une info est déjà dans MEMORY.md, ne pas la réécrire dans SQLite."], commandes: ["# La capture claude-mem est automatique (hooks).\n# Pour écrire en SQLite manuellement :\n~/.claude/cc-mem add pref ui-style 'dark-first, glassmorphism'\n~/.claude/cc-mem add decision auth 'Supabase Auth — 2026-04'\n\n# Pour vérifier ce qui a été capturé :\n~/.claude/cc-mem list"], verify: ["~/.claude/cc-mem list | head -10"] }
       ]},
-      { id: "plugins", icon: "🔌", short: "Plugins & Skills", title: "Plugins & Skills", desc: "Active les 7 plugins Claude Code via settings.json : superpowers, codex (marketplace GitHub custom), code-review, security-guidance, skill-creator, frontend-design, telegram.", steps: [
+      { id: "plugins", icon: "extension", short: "Plugins & Skills", title: "Plugins & Skills", desc: "Active les 7 plugins Claude Code via settings.json : superpowers, codex (marketplace GitHub custom), code-review, security-guidance, skill-creator, frontend-design, telegram.", purpose: ["Les plugins activent l'écosystème Claude Code : superpowers (skills, advisor, speckit), Codex stop-gate (review automatique avant fin de session), security-guidance (alerte avant Edit/Write risqué sur du code sensible), telegram (accès distant), code-review, frontend-design, skill-creator. Sans eux, Claude Code reste un CLI basique.", "**Le gain** : un Claude Code augmenté — review automatique en fin de session, alertes sécurité sur du code dangereux, skills réutilisables (TDD, debugging, finishing-branch), accès mobile via Telegram, marketplace de skills. C'est la différence entre 'CLI nu' et 'environnement de travail complet'."], steps: [
         { title: "Activer les plugins dans settings.json", concept: ["Les plugins Claude Code s'activent via enabledPlugins dans ~/.claude/settings.json.", "Au premier lancement suivant, Claude Code les télécharge et installe automatiquement.", "Les 7 plugins : superpowers (skills, advisor, speckit), codex, code-review, security-guidance, skill-creator, frontend-design, telegram.", "⚠️ Les commandes ci-dessous fusionnent les clés dans settings.json existant — elles ne l'écrasent pas."], commandes: ["# Créer settings.json s'il n'existe pas encore\nmkdir -p ~/.claude\n[ ! -f ~/.claude/settings.json ] && echo '{}' > ~/.claude/settings.json\n\n# Fusionner les paramètres de base (préserve permissions, hooks, etc.)\nS=~/.claude/settings.json\njq '. * {\"model\":\"sonnet\",\"language\":\"français\",\"effortLevel\":\"high\",\"advisorModel\":\"opus\",\"autoDreamEnabled\":true,\"skipDangerousModePermissionPrompt\":true,\"voiceEnabled\":true}' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\"\n\n# Fusionner les plugins (préserve les plugins existants)\njq '.enabledPlugins = ((.enabledPlugins // {}) * {\"superpowers@claude-plugins-official\":true,\"codex@openai-codex\":true,\"code-review@claude-plugins-official\":true,\"security-guidance@claude-plugins-official\":true,\"skill-creator@claude-plugins-official\":true,\"frontend-design@claude-plugins-official\":true,\"telegram@claude-plugins-official\":true})' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\""], verify: ["jq '.enabledPlugins | keys' ~/.claude/settings.json"] },
         { title: "Ajouter le marketplace Codex", concept: ["Le plugin codex vient du marketplace GitHub openai/codex-plugin-cc, pas du marketplace officiel Anthropic.", "La clé extraKnownMarketplaces déclare cette source externe — sans elle, codex@openai-codex est introuvable.", "Ce marketplace expose le plugin Codex CLI intégré à Claude Code."], commandes: ["# Ajouter uniquement la clé openai-codex (préserve les autres marketplaces éventuels)\njq '.extraKnownMarketplaces.\"openai-codex\" = {\"source\":{\"source\":\"github\",\"repo\":\"openai/codex-plugin-cc\"}}' ~/.claude/settings.json > /tmp/s.json && mv /tmp/s.json ~/.claude/settings.json"], verify: ["jq '.extraKnownMarketplaces' ~/.claude/settings.json"] },
         { title: "Premier lancement — installation des plugins", concept: ["Au premier claude, tous les plugins déclarés s'installent dans ~/.claude/plugins/cache/.", "L'installation prend 1-2 min. Quitter avec /exit une fois terminé.", "Les plugins injectent automatiquement des hooks : Codex stop-gate (revue à chaque fin de session), security-guidance (alerte avant Edit/Write risqué), superpowers SessionStart (chargement mémoire)."], commandes: ["claude"], verify: ["ls ~/.claude/plugins/cache/ 2>/dev/null | head -10"] },
         { title: "Vérifier les hooks auto-injectés", concept: ["3 hooks sont actifs automatiquement après installation des plugins (zéro config manuelle) :", "• Codex stop-gate (Stop event, 900s) : Codex passe en revue les fichiers modifiés avant de clore la session.", "• security-guidance (PreToolUse Edit/Write) : avertit si le code contient une vulnérabilité potentielle.", "• superpowers SessionStart : charge les fichiers mémoire du projet au démarrage."], commandes: ["ls ~/.claude/plugins/cache/ | head -20"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/"] }
       ]},
-      { id: "workflow", icon: "⚡", short: "Workflow de dév.", title: "Workflow de développement", desc: "superpowers est le système de skills invoqué en premier. Son mode plan est remplacé par speckit (specify→clarify→plan→tasks→analyze→implement). TDD, 4 quality gates, et /advisor pour valider.", steps: [
-        { title: "Installer superpowers et speckit (GitHub)", concept: ["superpowers est le plugin qui charge le système de skills à chaque session (SessionStart hook automatique).", "Il est installé via le module Plugins (enabledPlugins dans settings.json). Mais speckit est un skill séparé qui doit être configuré.", "speckit-constitution et superpowers-speckit viennent du même marketplace GitHub : claude-plugins-official.", "IMPORTANT : dans CLAUDE.md, il faut déclarer explicitement que superpowers-speckit remplace le mode plan natif de superpowers — sinon Claude utilisera l'ancien workflow brainstorming+planning."], commandes: ["# superpowers est installé via le module Plugins (settings.json enabledPlugins).\n# Vérifier qu'il est bien présent :\nls ~/.claude/plugins/cache/claude-plugins-official/superpowers/\n\n# Vérifier que speckit est accessible (skill dans superpowers) :\nls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep speckit\n\n# Si manquant, relancer claude pour forcer la réinstallation des plugins :\nclaude --version"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -i speckit && echo '✓ speckit OK' || echo '✗ speckit manquant — relancer claude'"] },
-        { title: "Le cycle complet : superpowers d'abord, speckit remplace plan", concept: ["Principe : superpowers est invoqué EN PREMIER sur toute nouvelle feature/bug/tâche non triviale.", "superpowers charge les skills disponibles et orchestre le workflow. Son mode 'plan' natif est REMPLACÉ par speckit.", "Le cycle speckit en 6 phases :", "• specify : décrire ce qu'on veut construire (feature ou bug)", "• clarify : Claude pose des questions une par une pour affiner", "• plan : 2-3 options architecturales, compromis explicités", "• tasks : décomposition TDD — tests écrits AVANT l'implémentation", "• analyze : cohérence cross-artifacts vérifiée avant de coder", "• implement : code itératif, commits fréquents", "Invoquer : le skill superpowers-speckit dans Claude Code, ou taper 'utilise speckit pour <feature>'."], commandes: ["# Lancer superpowers au démarrage d'une nouvelle feature :\n# Claude charge les skills automatiquement via SessionStart hook.\n# Pour une nouvelle feature, taper dans le prompt :\n# 'Utilise speckit pour [décrire la feature]'\n#\n# Claude invoque alors dans l'ordre :\n# superpowers-speckit → specify → clarify → plan → tasks → analyze → implement"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/"] },
-        { title: "Configurer CLAUDE.md avec Skill Priority", concept: ["La section Skill Priority dans CLAUDE.md dit à Claude d'utiliser speckit en priorité pour tout nouveau développement.", "Sans cette directive, Claude peut choisir d'autres workflows (brainstorming, writing-plans) qui sont moins structurés.", "Ce fichier dans le dossier projet surcharge les settings globaux pour ce projet."], commandes: ["cat >> CLAUDE.md <<'EOF'\n\n## Skill Priority\n\n- **Pour tout nouveau développement** (feature, projet, composant) : utiliser le skill `superpowers-speckit` au lieu de `superpowers:brainstorming` et `superpowers:writing-plans`. Le workflow spec-kit (specify→clarify→plan→tasks→analyze→implement) remplace les phases brainstorming et planning de superpowers.\n- Les autres skills superpowers restent actifs normalement (TDD, debugging, worktrees, code-review, finishing-branch, verification).\nEOF"], verify: ["grep -A4 'Skill Priority' CLAUDE.md"] },
-        { title: "Les 4 quality gates (obligatoires avant commit)", concept: ["Avant tout commit, dans cet ordre :", "• /verification : tests, build, lint — s'assure que rien n'est cassé", "• /code-review : revue complète du code produit", "• /simplify : éliminer la complexité inutile (YAGNI)", "• /finishing : polish final, cohérence, documentation minimale", "Ces gates sont non-négociables. Un commit sans elles risque d'introduire des régressions non détectées."], commandes: ["# Séquence quality gates avant commit :\n# /verification\n# /code-review\n# /simplify\n# /finishing\n# git add ... && git commit -m 'feat: ...'"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -E 'verification|code-review|simplify|finishing'"] }
+      { id: "hooks-python", icon: "webhook", short: "Hooks Python", title: "Hooks Python — framework dispatcher", desc: "Framework Python centralisé pour les events Claude Code (PreCompact, PostCompact, TaskCompleted, SubagentStop, WorktreeCreate/Remove, …). Un dispatcher unique, des handlers chargés dynamiquement, logs JSONL append-only, snapshots de session avant compaction.", purpose: ["Claude Code expose 27 hook events. Sans framework, chaque event = un script shell ad-hoc dans settings.json — chacun parsant le JSON, gérant ses logs, ses erreurs. Au-delà de 3-4 hooks, c'est ingérable et duplicable.", "**Le gain** : UN dispatcher Python centralisé, handlers chargés dynamiquement (drop un .py et c'est actif), logs JSONL append-only pour audit, snapshots avant chaque /compact (rattrapage possible si une session est compactée trop tôt). Tu peux ajouter un nouvel handler en 10 lignes au lieu de 100."], steps: [
+        { title: "Concept : pourquoi un dispatcher Python", concept: ["Claude Code expose 27 hook events (PreToolUse, Stop, PreCompact, PostCompact, TaskCompleted, SubagentStart/Stop, WorktreeCreate/Remove, Notification, etc.).", "Sans framework : N scripts shell éparpillés dans settings.json, chacun avec son propre parsing JSON et ses propres logs. Vite ingérable.", "Avec dispatcher : UN seul script Python, déclaration des handlers via JSON config, logs JSONL append-only, exception → log + continue (jamais bloquer le runtime).", "Convention handler : un fichier Python ~/.claude/hooks/py/handlers/<name>.py expose `handle(payload: dict) -> dict | None`. Charge dynamique, hot-pluggable.", "Compatibilité avec d'autres hooks : ce framework s'ajoute aux hooks existants (RTK rewrite sur PreToolUse, hooks plugin Codex/security-guidance auto-injectés). Aucun conflit."]},
+        { title: "Créer le dispatcher principal", concept: ["~/.claude/hooks/py/dispatcher.py est invoqué pour chaque event déclaré dans settings.json.", "Il lit le payload JSON sur stdin, charge handlers.json (+ handlers.local.json optionnel), exécute les handlers déclarés pour l'event, et écrit éventuellement une décision sur stdout (PreToolUse/Stop uniquement).", "Best-effort : exception dans un handler → log + continue, jamais bloquer le runtime de Claude Code."], commandes: ["mkdir -p ~/.claude/hooks/py/handlers ~/.claude/hooks/config ~/.claude/hooks/logs\n# Copier le contenu de src-hooks-dispatcher ci-dessous dans :\n#   ~/.claude/hooks/py/dispatcher.py\nchmod +x ~/.claude/hooks/py/dispatcher.py"], verify: ["python3 ~/.claude/hooks/py/dispatcher.py --event=Test < /dev/null && echo '✓ dispatcher OK'"], src: "src-hooks-dispatcher" },
+        { title: "Créer les handlers de base", concept: ["Trois handlers utiles dès l'installation, à placer dans ~/.claude/hooks/py/handlers/ :", "• log_event.py : append JSONL dans logs/<event>.jsonl. Audit + retroinspection des events.", "• snapshot_session.py : sur PreCompact, sauvegarde transcript_path + cwd + ts + session_id dans logs/snapshots/, et copie le transcript jsonl. Permet de retrouver le contexte d'une session compactée.", "• notify_subagent.py : sur SubagentStop, bell terminal + nom du subagent → discret en parallélisation."], commandes: ["# Copier le contenu de src-hooks-handlers ci-dessous, qui contient 3 fichiers concaténés.\n# Chaque section est délimitée par '### FILE: handlers/<name>.py' — copier chaque section dans son fichier."], verify: ["ls ~/.claude/hooks/py/handlers/ && [ $(ls ~/.claude/hooks/py/handlers/*.py 2>/dev/null | wc -l) -ge 3 ] && echo '✓ 3 handlers en place'"], src: "src-hooks-handlers" },
+        { title: "Configurer handlers.json + déclarer dans settings.json", concept: ["handlers.json mappe chaque event aux handlers à exécuter, dans l'ordre.", "settings.json déclare le dispatcher pour chaque event via le bloc hooks. Timeout court (3000ms), async true.", "Le merge jq est idempotent : si tu re-runs, il remplace au lieu de dupliquer."], commandes: ["# 1. Config des handlers par event :\ncat > ~/.claude/hooks/config/handlers.json <<'EOF'\n{\n  \"PreCompact\":      [{\"name\":\"log_event\"}, {\"name\":\"snapshot_session\"}],\n  \"PostCompact\":     [{\"name\":\"log_event\"}],\n  \"TaskCompleted\":   [{\"name\":\"log_event\"}],\n  \"SubagentStop\":    [{\"name\":\"notify_subagent\"}, {\"name\":\"log_event\"}],\n  \"WorktreeCreate\":  [{\"name\":\"log_event\"}],\n  \"WorktreeRemove\":  [{\"name\":\"log_event\"}]\n}\nEOF\n\n# 2. Déclarer chaque event dans settings.json (idempotent) :\nS=~/.claude/settings.json\n[ ! -f \"$S\" ] && echo '{}' > \"$S\"\nfor EVT in PreCompact PostCompact TaskCompleted SubagentStop WorktreeCreate WorktreeRemove; do\n  CMD=\"/usr/bin/python3 $HOME/.claude/hooks/py/dispatcher.py --event=$EVT\"\n  jq --arg evt \"$EVT\" --arg cmd \"$CMD\" '\n    .hooks[$evt] = (((.hooks[$evt] // []) | map(select((.hooks // [{}])[0].command != $cmd))) + [{\"hooks\":[{\"type\":\"command\",\"command\":$cmd,\"timeout\":3000,\"async\":true}]}])\n  ' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\"\ndone"], verify: ["jq '.hooks | keys' ~/.claude/settings.json && cat ~/.claude/hooks/config/handlers.json | jq 'keys'"] }
       ]},
-      { id: "multiagents", icon: "🤖", short: "Multi-agents", title: "Multi-agents", desc: "⚠️ Utile uniquement si vous avez plusieurs abonnements actifs (Anthropic + OpenAI et/ou Google). Coordonne Claude (orchestration), Codex (implémentation) et Gemini (gratuit, git/docs) via tmux.", steps: [
+      { id: "workflow", icon: "rocket_launch", short: "Workflow de dév.", title: "Workflow de développement", desc: "Cycle TDD avec speckit (remplace brainstorming/writing-plans), agents dédiés isolés en worktree, 8 quality gates avec règles conditionnelles, /speckit-flow pour orchestrer Research→Plan→Implement→Gates en une commande.", purpose: ["Sans discipline, Claude génère du code qui marche mais n'est pas testé, mal architecturé, et impossible à reviewer en équipe. C'est le piège classique 'ça marche sur ma machine puis ça casse en prod'.", "**Le gain** : speckit + agents dédiés + 8 quality gates transforment Claude Code en méthode reproductible. TDD strict (tests AVANT code), isolation des phases (research / plan / impl chacun dans son contexte), validation par /codex:review (deuxième paire d'yeux Opus). C'est la différence entre 'générateur de code' et 'ingénieur méthodique'."], steps: [
+        { title: "Vérifier superpowers + speckit installés", concept: ["superpowers est le plugin qui charge les skills à chaque session (SessionStart hook automatique).", "Installé via le module Plugins (settings.json enabledPlugins).", "speckit est un skill EMBARQUÉ dans superpowers. Il doit apparaître dans le cache.", "Si absent, c'est que les plugins n'ont pas été installés — refais le module Plugins puis relance claude."], commandes: ["# Vérifier la présence du skill speckit :\nls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -i speckit\n\n# Si vide, forcer la réinstallation :\nclaude --version"], verify: ["ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ 2>/dev/null | grep -qi speckit && echo '✓ speckit OK' || echo '✗ speckit manquant — refaire module Plugins'"] },
+        { title: "settings.json — Skill Priority + plansDirectory + agent teams", concept: ["3 réglages liés au workflow speckit :", "• Skill Priority dans CLAUDE.md : dit à Claude d'utiliser superpowers-speckit pour tout nouveau dev (au lieu de brainstorming/writing-plans).", "• plansDirectory: './reports' : sauvegarde les plans speckit dans ./reports/ du projet — au lieu d'être éphémères en contexte. Tu peux relire le plan, le partager, y revenir entre sessions.", "• CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 : flag expérimental qui permet à plusieurs subagents de coopérer sur une même tâche avec coordination via state partagé."], commandes: ["# 1. Ajouter plansDirectory et le flag agent teams dans settings.json global :\nS=~/.claude/settings.json\n[ ! -f \"$S\" ] && echo '{}' > \"$S\"\njq '. * {\"plansDirectory\":\"./reports\"} | .env = ((.env // {}) * {\"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS\":\"1\"})' \"$S\" > /tmp/cc.json && mv /tmp/cc.json \"$S\"\n\n# 2. Ajouter Skill Priority dans CLAUDE.md global (idempotent) :\nC=~/.claude/CLAUDE.md\n[ ! -f \"$C\" ] && touch \"$C\"\ngrep -q 'Skill Priority' \"$C\" || cat >> \"$C\" <<'EOF'\n\n## Skill Priority\n- Pour tout nouveau dev (feature, projet, composant) : utiliser le skill superpowers-speckit (specify→clarify→plan→tasks→analyze→implement) au lieu de brainstorming/writing-plans.\n- Pour les features non-triviales (>1 fichier ou >30 min) : préférer /speckit-flow à l'invocation manuelle du skill speckit.\n- Les autres skills superpowers restent actifs (TDD, debugging, worktrees, code-review, finishing-branch, verification).\nEOF"], verify: ["jq '.plansDirectory, .env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS' ~/.claude/settings.json && grep -q 'Skill Priority' ~/.claude/CLAUDE.md && echo '✓ OK'"] },
+        { title: "Agent dédié — speckit-impl (Opus, worktree, TDD)", concept: ["speckit-impl est un subagent Opus qui exécute la phase implement de speckit en isolation totale.", "Configuration : isolation worktree (git worktree dédié), permissionMode acceptEdits, skills préchargés (speckit, TDD, verification, refactoring), memory: project.", "Discipline TDD stricte : un test échoué = délégation à test-validator pour diagnostic.", "Avantage clé : le contexte parent reste propre — l'implémentation se passe dans un sous-contexte avec ses propres tools."], commandes: ["mkdir -p ~/.claude/agents\n# Copier le contenu de src-speckit-impl ci-dessous dans :\n#   ~/.claude/agents/speckit-impl.md\n# (le bouton Copier est en bas de cette section)"], verify: ["test -f ~/.claude/agents/speckit-impl.md && head -1 ~/.claude/agents/speckit-impl.md && echo '✓ agent en place'"], src: "src-speckit-impl" },
+        { title: "Agent dédié — test-validator (Sonnet, read-only)", concept: ["test-validator est un subagent Sonnet read-only sur le code applicatif.", "Deux modes : validation (lance les tests, rapport ✅/❌) et diagnostic (root-cause analysis sur un échec).", "Skills préchargés : systematic-debugging, verification-before-completion. Pas d'edit — il rapporte uniquement.", "speckit-impl le délègue dès qu'un test échoue : la diagnose se fait dans un contexte isolé pour ne pas polluer l'implémentation."], commandes: ["mkdir -p ~/.claude/agents\n# Copier le contenu de src-test-validator ci-dessous dans :\n#   ~/.claude/agents/test-validator.md"], verify: ["test -f ~/.claude/agents/test-validator.md && echo '✓ agent en place'"], src: "src-test-validator" },
+        { title: "Slash command /speckit-flow", concept: ["/speckit-flow orchestre le workflow complet en une commande : Research (Explore/Haiku read-only) → Spec & Plan (skill speckit, sauvegarde dans ./reports/) → Implement (speckit-impl/Opus en worktree) → Quality gates automatiques.", "Pattern Command → Agent → Skill : la commande oriente, les agents exécutent en isolation, les gates valident.", "À utiliser pour features non-triviales (>1 fichier ou >30 min). Pour les petits ajouts, le skill speckit direct suffit.", "Avantage clé : isolation des phases — chaque agent a son propre contexte, le principal reste propre."], commandes: ["mkdir -p ~/.claude/commands\n# Copier le contenu de src-speckit-flow ci-dessous dans :\n#   ~/.claude/commands/speckit-flow.md"], verify: ["test -f ~/.claude/commands/speckit-flow.md && echo '✓ /speckit-flow disponible'"], src: "src-speckit-flow" },
+        { title: "Les 8 quality gates (avec règles conditionnelles)", concept: ["Avant tout commit / PR, dans cet ordre strict :", "1. /verification (skill verification-before-completion) — tests, build, lint, build clean", "2. /simplify — éliminer abstractions inutiles, YAGNI, suppressions safe", "3. self-review — relecture du diff complet par Claude (auto-critique)", "4. /security-review — CONDITIONNEL : seulement si auth, crypto, secrets, payment, upload, permissions ou SQL touchés", "5. /codex:review — revue indépendante par Codex (deuxième paire d'yeux Opus, modèle différent)", "6. receiving-code-review — appliquer les retours du review précédent", "7. /code-review — CONDITIONNEL : seulement si PR créée et diff > 50 lignes", "8. /finishing-branch — polish final, cohérence, doc minimale, prêt à merger", "Hygiene commit : aucun 'Co-Authored-By: Claude' ni 'Generated with Claude Code' dans commits/PR. L'utilisateur est l'unique auteur."], commandes: ["C=~/.claude/CLAUDE.md\n[ ! -f \"$C\" ] && touch \"$C\"\ngrep -q 'Quality Gates' \"$C\" || cat >> \"$C\" <<'EOF'\n\n## Quality Gates (ordre strict avant commit/PR)\n1. /verification — tests, build, lint\n2. /simplify — YAGNI, suppressions safe\n3. self-review — relecture diff complet\n4. /security-review — si auth/crypto/secrets/payment/upload/permissions/SQL\n5. /codex:review — review indépendant Codex\n6. receiving-code-review — appliquer retours\n7. /code-review — si PR créée et diff > 50 lignes\n8. /finishing-branch — polish final\n\n## Commit hygiene\n- Aucun 'Co-Authored-By: Claude' ni 'Generated with Claude Code' dans commits ou PR.\n- L'utilisateur est l'unique auteur.\nEOF"], verify: ["grep -A6 'Quality Gates' ~/.claude/CLAUDE.md"] }
+      ]},
+      { id: "worktrees", icon: "account_tree", short: "Worktrees parallèles", title: "Worktrees parallèles", desc: "3-5 sessions Claude Code en parallèle, chacune dans un worktree git isolé — appelé par Boris Cherny le 'biggest productivity unlock' de Claude Code. Aliases shell pour créer/naviguer/lancer Claude dans un worktree en une commande.", purpose: ["Une seule session Claude active = un seul scope, /compact toutes les heures, attention divisée entre les features en cours. Tu pivotes mal, tu perds le fil, tu fais du mauvais boulot sur les deux fronts.", "**Le gain** : 3-5 worktrees parallèles, chacun avec un scope réduit = pas de /compact nécessaire, productivité multipliée. `f new-feature` et tu as une nouvelle session Claude prête en 5 secondes. Combiné avec `isolation: worktree` sur les subagents (ex: speckit-impl), tu obtiens un parallélisme à 2 niveaux : entre tes sessions humaines + au sein d'une session via subagents."], steps: [
+        { title: "Concept : pourquoi 3-5 worktrees parallèles", concept: ["Boris Cherny (créateur de Claude Code) appelle ce pattern le 'biggest productivity unlock' : plusieurs sessions Claude actives, chacune dans un worktree git distinct, avec un scope réduit.", "Avantages :", "• Pas de /compact à gérer : chaque session reste propre car son scope est limité.", "• Travail parallèle réel : feature A en worktree 1, refactor B en worktree 2, exploration C en worktree 3.", "• Contexte d'attention humain préservé : tu pivotes entre sessions sans perdre le fil.", "Combiné avec les subagents (frontmatter `isolation: worktree`, ex: speckit-impl), tu obtiens un parallélisme à 2 niveaux : entre sessions humaines + au sein d'une session via subagents.", "Limite pratique : 3-5 max — au-delà, la coordination humaine devient le goulot. UN worktree = UNE branche = UN sujet."]},
+        { title: "Installer les aliases shell", concept: ["5 fonctions + 2 aliases dans un fichier sourcé depuis ~/.zshrc :", "• cwt <branch> : naviguer dans un worktree existant", "• cwt-new <branch> [base] : créer un nouveau worktree (depuis main par défaut) et y entrer", "• cwt-ls : lister les worktrees du repo courant", "• cwt-rm <branch> [--with-branch] : supprimer un worktree (et optionnellement la branche)", "• m / f / a : raccourcis Boris-style — m = main + claude (depuis le repo principal), f <branch> = feature worktree + claude, a = analysis worktree (read-only) + claude", "Convention : worktrees stockés dans ~/Dev/_worktrees/<repo>-<branch>.", "⚠️ Collision potentielle : les noms 1-lettre m / f / a peuvent entrer en conflit avec d'autres outils (fzf wrappers, alias man, complétions). Vérifier AVANT de sourcer avec `type m f a` — si déjà définis, renommer en cc-m / cc-f / cc-a dans aliases-worktrees.sh."], commandes: ["# 1. Vérifier les collisions potentielles :\ntype m f a 2>&1 | grep -v 'not found' && echo '⚠️ Conflit détecté — éditer src-aliases-worktrees pour renommer m/f/a en cc-m/cc-f/cc-a' || echo '✓ Pas de conflit, on peut continuer'\n\n# 2. Copier le contenu de src-aliases-worktrees ci-dessous dans :\n#   ~/.claude/aliases-worktrees.sh\n\n# 3. Sourcer depuis ~/.zshrc (idempotent) :\nZRC=~/.zshrc\n[ ! -f \"$ZRC\" ] && touch \"$ZRC\"\ngrep -q 'aliases-worktrees.sh' \"$ZRC\" || \\\n  printf '\\n[ -f \"$HOME/.claude/aliases-worktrees.sh\" ] && source \"$HOME/.claude/aliases-worktrees.sh\"\\n' >> \"$ZRC\"\n\n# 4. Recharger pour cette session :\nsource ~/.claude/aliases-worktrees.sh"], verify: ["type cwt cwt-new >/dev/null 2>&1 && echo '✓ aliases cwt en place' && (type f >/dev/null 2>&1 && type a >/dev/null 2>&1 && echo '✓ raccourcis Boris en place' || echo '⚠️ raccourcis m/f/a non installés ou écrasés — ouvrir aliases-worktrees.sh pour renommer')"], src: "src-aliases-worktrees" },
+        { title: "Workflow type — créer un worktree + lancer Claude", concept: ["Cas d'usage 1 — feature parallèle : tu es sur main avec une session Claude. Une autre feature urgente arrive. Dans un nouveau terminal : `f new-feature` → crée le worktree + lance Claude dedans. Tu as 2 sessions Claude isolées, pas de /compact dans la première.", "Cas d'usage 2 — exploration read-only : `a` (analysis) → ouvre un worktree dédié à l'exploration sans toucher au code actif. Utile pour audits, RGPD, sécurité.", "Cas d'usage 3 — agent isolé en worktree : speckit-impl (cf. module Workflow) a `isolation: worktree` dans son frontmatter. Quand tu invoques `Agent({subagent_type:\"speckit-impl\",...})`, un worktree est créé automatiquement pour cet agent — tu n'as rien à faire."], commandes: ["# Test du flow complet (depuis un repo git, branche main propre) :\ncwt-ls                              # liste actuelle\nf test-worktrees                    # crée + lance Claude dans ~/Dev/_worktrees/<repo>-test-worktrees\n# Dans Claude : faire qq chose, commit, /exit\ncwt-rm test-worktrees --with-branch # nettoyage (worktree + branche)"], verify: ["cwt-ls"] }
+      ]},
+      { id: "multiagents", icon: "diversity_3", short: "Multi-agents", title: "Multi-agents", desc: "⚠️ Utile uniquement si vous avez plusieurs abonnements actifs (Anthropic + OpenAI et/ou Google). Coordonne Claude (orchestration), Codex (implémentation) et Gemini (gratuit, git/docs) via tmux.", purpose: ["Si tu as plusieurs abonnements (Anthropic + ChatGPT Pro + Gemini), tu peux orchestrer Claude (architecture/review) + Codex (implémentation, SOTA SWE-bench) + Gemini (git/docs/contexte large 1M tokens) sur la même tâche, en parallèle, sans conflit d'écriture grâce au filesystem comme bus de communication.", "**Le gain** : utiliser le meilleur modèle pour chaque sous-tâche au lieu de tout faire avec un seul, et travailler en parallèle au lieu de séquentiellement. ⚠️ Inutile si tu n'as qu'un seul abonnement — reste en solo, ce module ne s'applique pas."], steps: [
         { title: "Prérequis : abonnements nécessaires", concept: ["⚠️ Le multi-agent n'apporte de la valeur que si vous avez plusieurs abonnements CLI actifs. Avec un seul compte Claude, restez en solo.", "Claude (Anthropic) : orchestrateur et architecte. Abonnement Pro (~20$/mo) ou Max (~100-200$/mo). CLI : claude.", "Codex (OpenAI) : développeur senior, le meilleur générateur de code (SWE-bench Pro SOTA). Inclus dans ChatGPT Pro. CLI : codex. Utiliser pour les implémentations features ciblées.", "Gemini (Google) : gratuit (60 req/min, 1000/jour). Rôle : git/GitHub (branches, commits, PRs), documentation, analyse de contexte large (1M tokens), modules secondaires. CLI : gemini.", "Architecture : Claude orchestre via le filesystem (.ai/state.json, .ai/context/, .ai/tasks/). Un fichier = un agent max pour éviter les conflits d'écriture.", "Matrice de décision : tâche d'implémentation complexe → Codex. Git/PR/docs → Gemini. Architecture/review/réconciliation → Claude."], commandes: ["# Installer les CLIs selon vos abonnements :\nnpm install -g @anthropic-ai/claude-code        # Claude (toujours)\nnpm install -g @openai/codex                    # Codex (si ChatGPT Pro)\n# Gemini : https://ai.google.dev/gemini-api/docs/gemini-cli\n\n# Vérifier :\ncommand -v claude && echo '✓ claude'\ncommand -v codex && echo '✓ codex'\ncommand -v gemini && echo '✓ gemini'"], verify: ["command -v claude && command -v tmux"] },
         { title: "Installer tmux-ai", concept: ["tmux-ai cree des sessions reproductibles: solo, duo, team, monitor et review.", "Layouts : solo (Claude + shell), duo (Claude + Gemini), team (Claude + Codex + Gemini + shell), monitor (Claude + tests + logs + git).", "Le flag -k supprime la session existante avant de la recreer."], commandes: ["mkdir -p ~/bin", "pbpaste > ~/bin/tmux-ai", "chmod +x ~/bin/tmux-ai"], verify: ["~/bin/tmux-ai --help"], src: "src-tmux-ai" },
         { title: "Protocole de coordination inter-agents", concept: ["Le filesystem est le bus de communication entre agents. Structure standard dans .ai/ :", "• .ai/state.json : état global — qui fait quoi, sur quels fichiers (verrous)", "• .ai/context/codex-brief.md : briefing complet pour Codex (contexte + mission + fichiers interdits)", "• .ai/context/gemini-brief.md : briefing pour Gemini", "• .ai/tasks/ : fiches de tâches assignées", "• .ai/logs/ : sorties brutes des agents", "Protocole en 4 temps : BRIEF (Claude prépare) → EXÉCUTION (agent) → DEBRIEF (Claude valide) → RÉCONCILIATION (Claude si besoin).", "⚠️ Règle critique : Git JAMAIS pendant qu'un agent écrit. Git = séquentiel, toujours confié à Gemini après validation Claude."], commandes: ["mkdir -p .ai/{context,tasks,logs,reviews}\ncat > .ai/state.json <<'EOF'\n{\n  \"agents\": {},\n  \"file_locks\": {},\n  \"current_phase\": \"planning\"\n}\nEOF"], verify: ["test -f .ai/state.json && echo '✓ structure .ai/ OK'"] },
         { title: "Tester un layout", concept: ["Un test rapide valide tmux, les chemins et les commandes disponibles avant une vraie session."], commandes: ["tmux-ai solo -k", "tmux ls | grep tmux-ai-solo"], verify: ["tmux has-session -t tmux-ai-solo && echo \"session OK\""] }
       ]},
-      { id: "browser", icon: "🌐", short: "Browser automation", title: "Automatisation browser", desc: "Configure dev-browser (CLI Playwright sandboxé) + Comet en mode debug. Inclut le workaround critique Playwright 1.58.2.", steps: [
+      { id: "browser", icon: "language", short: "Browser automation", title: "Automatisation browser", desc: "Configure dev-browser (CLI Playwright sandboxé) + Comet en mode debug. Inclut le workaround critique Playwright 1.58.2.", purpose: ["Automatiser un site authentifié (LinkedIn, dashboards privés, banques, SaaS internes) implique normalement de réimplémenter l'auth, gérer les cookies à la main, ou batailler avec le 2FA. Comet en debug mode + dev-browser sandboxé court-circuite tout ça.", "**Le gain** : Claude lit / clique sur tes onglets Comet déjà ouverts, en utilisant la session que TU as déjà authentifiée. Plus jamais de '2FA dans le scraper', plus jamais de session invalidée par MFA, plus jamais de re-login automatique. Tu pilotes le navigateur, Claude exécute."], steps: [
         { title: "Installer dev-browser", concept: ["dev-browser est un CLI Playwright sandboxé en QuickJS WASM.", "Mode --connect : se connecte au Comet ouvert sur le port de debug 9222 (session authentifiée).", "Mode standalone (sans --connect) : navigateur managé pour les tâches sans auth."], commandes: ["npm install -g dev-browser", "dev-browser install"], verify: ["dev-browser --version"] },
         { title: "Re-pin Playwright 1.58.2 (workaround obligatoire)", concept: ["Bug connu : SawyerHood/dev-browser#90 — le sandbox QuickJS WASM est compilé contre Playwright 1.58.2.", "Si npm installe une version plus récente, les appels API échouent silencieusement.", "Ce re-pin doit être refait après chaque npm update -g dev-browser ou dev-browser install."], commandes: ["cd ~/.dev-browser", "npm install playwright@1.58.2 playwright-core@1.58.2", "npx playwright install chromium", "dev-browser stop"], verify: ["cat ~/.dev-browser/node_modules/playwright/package.json | jq -r '.version'"] },
         { title: "Créer le script comet-debug", concept: ["comet-debug gère le cycle de vie de Comet avec le port debug :", "• Si Comet tourne déjà avec le port 9222 → ne fait rien (exit 0)", "• Si Comet tourne sans le port debug → le quitte proprement et relance avec --remote-debugging-port=9222", "• --status : diagnostic sans mutation", "À appeler systématiquement avant dev-browser --connect."], commandes: ["mkdir -p ~/.local/bin", "# Copier le script (voir ci-dessous), puis :", "chmod +x ~/.local/bin/comet-debug"], verify: ["comet-debug --status"], src: "src-comet-debug" },
         { title: "Tester la connexion", concept: ["Une fois comet-debug lancé, dev-browser --connect se connecte à Comet via le port 9222 et expose l'API Playwright sur les onglets ouverts."], commandes: ["comet-debug\ndev-browser --connect <<'EOF'\nconst tabs = await browser.listPages();\nconsole.log(JSON.stringify(tabs, null, 2));\nEOF"], verify: ["# La liste des onglets Comet s'affiche en JSON"] }
       ]},
-      { id: "n8n", icon: "🔄", short: "Workflows N8N", title: "Workflows N8N", desc: "Créer et gérer des workflows N8N depuis Claude Code via deux MCP complémentaires : n8n-mcp (interaction directe : search_nodes, get_node, create) + Context7 (documentation à jour des nœuds).", steps: [
+      { id: "n8n", icon: "alt_route", short: "Workflows N8N", title: "Workflows N8N", desc: "Créer et gérer des workflows N8N depuis Claude Code via deux MCP complémentaires : n8n-mcp (interaction directe : search_nodes, get_node, create) + Context7 (documentation à jour des nœuds).", purpose: ["Créer / modifier des workflows N8N implique normalement de cliquer dans l'UI, copier-coller des JSON entre nœuds, et lire la doc à chaque nouveau type de nœud. Pour des automatisations métier complexes, ça prend des heures.", "**Le gain** : workflows complexes générés en minutes via langage naturel, doc à jour consultée automatiquement via Context7, validation du JSON avant déploiement. Idéal pour orchestrer des automatisations métier (notes de frais, briefings, alertes, intégrations API) sans devenir expert N8N."], steps: [
         { title: "n8n-mcp + Context7 — l'approche à deux MCP", concept: ["Deux MCP se complètent pour travailler avec N8N :", "• n8n-mcp (via supergateway) : pont StreamableHttp vers le MCP server intégré de N8N à /mcp-server/http. Expose search_nodes, get_node, validate, create_workflow. Auth : JWT Bearer token.", "• Context7 : récupère la doc officielle à jour d'un nœud en 2 appels (resolve-library-id → query-docs). Toujours consulter AVANT d'utiliser un nœud inconnu.", "Workflow type : Context7 (doc) → search_nodes → get_node → validate → create_workflow → test.", "Instance N8N : https://n8n.kimsufi.automatisia.fr. JWT à générer dans N8N → Settings → MCP Server."] },
         { title: "Configurer n8n-mcp (supergateway) + Context7 dans mcp.json", concept: ["N8N expose nativement un MCP server à l'URL /mcp-server/http. On s'y connecte via supergateway en mode StreamableHttp.", "Authentification : JWT Bearer token généré dans N8N → Settings → MCP Server (ou API → Create Token).", "⚠️ Ne jamais mettre le JWT dans CLAUDE.md — uniquement dans mcp.json (chmod 600, non versionné).", "Context7 complète le dispositif pour la doc des nœuds N8N à jour."], commandes: ["# 1. Créer mcp.json si absent\nmkdir -p ~/.claude\n[ ! -f ~/.claude/mcp.json ] && echo '{\"mcpServers\":{}}' > ~/.claude/mcp.json\n\n# 2. Ajouter n8n-mcp via supergateway (remplacer <JWT> par ton token)\njq '.mcpServers[\"n8n-mcp\"] = {\n  \"command\": \"npx\",\n  \"args\": [\"-y\", \"supergateway\",\n    \"--streamableHttp\",\n    \"https://n8n.kimsufi.automatisia.fr/mcp-server/http\",\n    \"--header\",\n    \"authorization:Bearer <JWT>\"\n  ]\n}' ~/.claude/mcp.json > /tmp/mcp.json && mv /tmp/mcp.json ~/.claude/mcp.json\n\n# 3. Ajouter Context7\njq '.mcpServers.context7 = {\"command\":\"npx\",\"args\":[\"-y\",\"@upstash/context7-mcp@latest\"]}' ~/.claude/mcp.json > /tmp/mcp.json && mv /tmp/mcp.json ~/.claude/mcp.json\n\nchmod 600 ~/.claude/mcp.json"], verify: ["jq '.mcpServers | keys' ~/.claude/mcp.json\n# Doit afficher [\"context7\", \"n8n-mcp\"]\n# Dans Claude Code : /mcp → les deux doivent apparaître"] },
         { title: "Créer le notebook NotebookLM N8N", concept: ["1. Aller sur notebooklm.google.com → Nouveau notebook → 'N8N Base de Connaissances'", "2. Ajouter la documentation officielle N8N comme source (URL https://docs.n8n.io ou PDF)", "3. NotebookLM génère un résumé et permet des Q&R sémantiques sur la doc", "Garder l'ID du notebook pour le référencer dans les sessions."] },
         { title: "Workflow de création — 6 étapes", concept: ["Pour chaque workflow N8N à créer, suivre ce cycle en combinant les deux MCP :", "1. Context7 (MCP context7) → resolve-library-id('n8n') → query-docs(topic) — doc officielle du nœud", "2. n8n-mcp → search_nodes(query) — liste les nœuds disponibles dans l'instance N8N", "3. n8n-mcp → get_node(nodeType, 'standard') — structure complète du nœud avec ses paramètres", "4. n8n-mcp → validate(workflowJson) — vérifier la configuration avant création", "5. n8n-mcp → create_workflow(workflowJson) — créer le workflow dans l'instance N8N", "6. Test manuel dans l'interface N8N ou via l'API — vérifier le comportement attendu"], commandes: ["# Dans Claude Code avec les deux MCP actifs :\n# 'Utilise Context7 pour la doc du nœud HTTP Request, puis n8n-mcp pour créer le workflow'\n\n# Vérifier que les outils MCP sont disponibles :\n# /mcp → 'n8n' et 'context7' doivent apparaître dans la liste"] },
         { title: "Les 5 patterns d'agents N8N", concept: ["Les patterns réutilisables pour structurer les agents N8N :", "• Pattern 1 — Parent Agent : orchestrateur qui délègue aux sub-agents via Execute Workflow.", "• Pattern 2 — Prompt Chaining : sortie LLM → entrée du nœud suivant (pipeline séquentiel).", "• Pattern 3 — Routing : l'agent choisit quel sous-workflow exécuter selon le contexte (Switch node).", "• Pattern 4 — Parallelization : branches parallèles, résultats agrégés (Merge node).", "• Pattern 5 — Evaluator-Optimizer : un agent évalue la sortie d'un autre, boucle jusqu'à satisfaction (loop + condition)."]}
       ]},
-      { id: "telegram", icon: "📱", short: "Accès distant", title: "Accès distant — Telegram", desc: "Contrôle Claude Code depuis mobile via un bot Telegram. Plugin officiel + script cc + politique allowlist.", steps: [
+      { id: "telegram", icon: "send", short: "Accès distant", title: "Accès distant — Telegram", desc: "Contrôle Claude Code depuis mobile via un bot Telegram. Plugin officiel + script cc + politique allowlist.", purpose: ["Tu n'es pas toujours devant ton terminal. Sans accès distant, soit tu manques des opportunités de superviser un agent qui travaille en background, soit tu dois rentrer pour valider une décision bloquante. Résultat : tu attends, ou tu interromps ce que tu fais.", "**Le gain** : contrôle Claude depuis ton mobile — lancer une tâche, suivre un agent, valider / refuser une approche. Combiné avec /loop ou des tâches longues en parallèle, tu peux faire travailler Claude pendant que tu fais autre chose et recevoir un push quand c'est terminé."], steps: [
         { title: "Créer le bot via BotFather", concept: ["Sur Telegram, ouvrir une conversation avec @BotFather :", "1. Envoyer /newbot", "2. Choisir un nom d'affichage (ex: 'Mon Claude Code')", "3. Choisir un username unique se terminant par 'bot' (ex: monclaudecode_bot)", "4. Noter le token reçu (format : 123456789:AAH...)", "Le plugin telegram@claude-plugins-official est déjà activé via settings.json (module Plugins)."] },
         { title: "Configurer .env et access.json", concept: ["Deux fichiers dans ~/.claude/channels/telegram/ :", "• .env : contient le token du bot (ne pas versionner, chmod 600)", "• access.json : gère la politique d'accès — commencer en mode pairing pour capturer ton user_id Telegram, puis passer en allowlist."], commandes: ["mkdir -p ~/.claude/channels/telegram\nchmod 700 ~/.claude/channels/telegram\n# Token dans .env :\necho 'TELEGRAM_BOT_TOKEN=<voir vault>' > ~/.claude/channels/telegram/.env\nchmod 600 ~/.claude/channels/telegram/.env\n# access.json initial (mode pairing) :\ncat > ~/.claude/channels/telegram/access.json <<'EOF'\n{\n  \"dmPolicy\": \"pairing\",\n  \"allowedUsers\": []\n}\nEOF"], verify: ["ls -la ~/.claude/channels/telegram/"] },
         { title: "Politique d'accès allowlist", concept: ["Le mode pairing est temporaire — il génère un code unique quand un inconnu envoie un message.", "Workflow : cc → envoyer un message depuis Telegram → noter le code de pairing → /telegram:access pair <code>", "Une fois ton user_id connu, passer en allowlist pour fermer le pairing."], commandes: ["# Après avoir capturé ton user_id via pairing :\ncat > ~/.claude/channels/telegram/access.json <<'EOF'\n{\n  \"dmPolicy\": \"allowlist\",\n  \"allowedUsers\": [\n    {\n      \"userId\": \"<ton-user-id-telegram>\",\n      \"displayName\": \"Philippe\"\n    }\n  ]\n}\nEOF"], verify: ["cat ~/.claude/channels/telegram/access.json | jq '.dmPolicy'"] },
@@ -221,7 +290,7 @@
         { title: "Script cc — lancement simplifié", concept: ["Le script cc concentre les deux options nécessaires à l'accès distant :", "• --dangerously-skip-permissions : évite les confirmations interactives (impossible à valider depuis Telegram)", "• --channels plugin:telegram@... : active le canal au démarrage", "À lancer dans tmux pour garder une session récupérable après déconnexion."], commandes: ["mkdir -p ~/.local/bin\n# Copier le script ci-dessous, puis :\nchmod +x ~/.local/bin/cc\n# Ajouter ~/.local/bin au PATH dans ~/.zshrc :\nexport PATH=\"$HOME/.local/bin:$PATH\""], verify: ["cat ~/.local/bin/cc"], src: "src-cc" }
       ]}
     ];
-    const MEMORY_IDS = ["memory-md", "memory-sqlite", "memory-claudemem", "memory-coord"];
+    const MEMORY_IDS = MODULES.filter(function (m) { return m.group === "memory"; }).map(function (m) { return m.id; });
     let progress = {};
     let openTabs = {};
     let currentModule = "base";
@@ -273,17 +342,23 @@
     function renderSidebar() {
       const sidebar = document.getElementById("sidebar");
       sidebar.textContent = "";
-      addNav(sidebar, MODULES[0]);
-      addNav(sidebar, MODULES[1]);
-      const group = el("div", "memory-group open");
-      const head = el("button", "memory-head");
-      head.append(el("span", "nav-icon", "🧠"), el("span", "nav-title", "Mémoire"), el("span", "nav-count", memoryCountText()), el("span", "chev", "›"));
-      head.addEventListener("click", function () { group.classList.toggle("open"); });
-      const children = el("div", "memory-children");
-      MEMORY_IDS.forEach(function (id) { addNav(children, MODULES.find(function (m) { return m.id === id; })); });
-      group.append(head, children);
-      sidebar.appendChild(group);
-      MODULES.slice(6).forEach(function (m) { addNav(sidebar, m); });
+      let memoryChildren = null;
+      MODULES.forEach(function (mod) {
+        if (mod.group === "memory") {
+          if (!memoryChildren) {
+            const group = el("div", "memory-group open");
+            const head = el("button", "memory-head");
+            head.append(el("span", "nav-icon material-symbols-outlined", "psychology"), el("span", "nav-title", "Mémoire"), el("span", "nav-count", memoryCountText()), el("span", "chev material-symbols-outlined", "chevron_right"));
+            head.addEventListener("click", function () { group.classList.toggle("open"); });
+            memoryChildren = el("div", "memory-children");
+            group.append(head, memoryChildren);
+            sidebar.appendChild(group);
+          }
+          addNav(memoryChildren, mod);
+        } else {
+          addNav(sidebar, mod);
+        }
+      });
       const sideProgress = el("div", "side-progress");
       const track = el("div", "progress-track");
       track.appendChild(el("div", "progress-fill"));
@@ -293,7 +368,7 @@
     function addNav(parent, mod) {
       const btn = el("button", "nav-item");
       btn.setAttribute("data-module", mod.id);
-      btn.append(el("span", "nav-icon", mod.icon), el("span", "nav-title", mod.short), el("span", "nav-count", countText(mod)));
+      btn.append(el("span", "nav-icon material-symbols-outlined", mod.icon), el("span", "nav-title", mod.short), el("span", "nav-count", countText(mod)));
       btn.addEventListener("click", function () { openModule(mod.id); });
       parent.appendChild(btn);
     }
@@ -305,11 +380,17 @@
         panel.id = "module-" + mod.id;
         const hero = el("div", "module-hero");
         const copy = el("div");
-        copy.append(el("div", "module-kicker", mod.icon + " Module " + (MODULES.indexOf(mod) + 1) + " / 11"), el("h2", "module-title", mod.title), el("p", "module-desc", mod.desc));
+        const kicker = el("div", "module-kicker");
+        kicker.appendChild(el("span", "kicker-icon material-symbols-outlined", mod.icon));
+        kicker.appendChild(document.createTextNode("Module " + (MODULES.indexOf(mod) + 1) + " / " + MODULES.length));
+        copy.append(kicker, el("h2", "module-title", mod.title), el("p", "module-desc", mod.desc));
         const meter = el("div", "module-meter");
         meter.append(el("strong", "meter-num", countText(mod)), el("span", "", "étapes"));
         hero.append(copy, meter);
-        const btn = el("button", "claude-btn", "🤖 Configurer avec Claude →");
+        const btn = el("button", "claude-btn");
+        btn.appendChild(el("span", "btn-icon material-symbols-outlined", "auto_awesome"));
+        btn.appendChild(document.createTextNode(" Configurer avec Claude "));
+        btn.appendChild(el("span", "btn-arrow material-symbols-outlined", "arrow_forward"));
         btn.setAttribute("onclick", "togglePrompt('" + mod.id + "')");
         const prompt = el("div", "prompt-panel");
         prompt.id = "prompt-" + mod.id;
@@ -321,7 +402,30 @@
         prompt.append(pre, copyBtn);
         const steps = el("div", "steps");
         mod.steps.forEach(function (step, idx) { steps.appendChild(renderStep(mod, step, idx + 1)); });
-        panel.append(hero, btn, prompt, steps);
+        panel.appendChild(hero);
+        if (mod.purpose && (Array.isArray(mod.purpose) ? mod.purpose.length : true)) {
+          const purpose = el("div", "module-purpose");
+          const purposeIcon = el("span", "purpose-icon material-symbols-outlined ms-fill", "lightbulb");
+          const purposeText = el("div", "purpose-text");
+          purposeText.appendChild(el("div", "purpose-head", "Pourquoi ce module"));
+          const items = Array.isArray(mod.purpose) ? mod.purpose : [mod.purpose];
+          items.forEach(function (p) {
+            const para = el("p");
+            String(p).split(/(\*\*[^*]+\*\*)/g).forEach(function (part) {
+              if (part.startsWith("**") && part.endsWith("**")) {
+                const strong = el("strong");
+                strong.textContent = part.slice(2, -2);
+                para.appendChild(strong);
+              } else if (part) {
+                para.appendChild(document.createTextNode(part));
+              }
+            });
+            purposeText.appendChild(para);
+          });
+          purpose.append(purposeIcon, purposeText);
+          panel.appendChild(purpose);
+        }
+        panel.append(btn, prompt, steps);
         content.appendChild(panel);
       });
     }
@@ -515,24 +619,47 @@
   <script type="text/x-code" id="prompt-base-content">
 Configure l'installation de base macOS pour Claude Code.
 
+PRÉREQUIS : macOS, accès sudo (pour Homebrew au premier install).
+
 Effectue les actions suivantes dans l'ordre :
 
-1. Vérifie si Homebrew est installé (brew --version). Si absent, installe-le depuis https://brew.sh.
-2. Installe les outils de base si absents : git, node, jq, tmux (brew install git node jq tmux).
-3. Installe Claude Code CLI : npm install -g @anthropic-ai/claude-code. Vérifie avec claude --version.
-4. Crée ~/.claude/ et ~/.claude/settings.json avec le contenu minimal {"model":"sonnet","language":"français"} si le fichier n'existe pas encore.
-5. Informe l'utilisateur que Comet browser doit être téléchargé manuellement depuis https://www.comet.so et glissé dans /Applications.
+1. Homebrew :
+   command -v brew >/dev/null && echo '✓ brew déjà installé' || \
+     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   brew --version
+
+2. Outils de base (idempotent — brew install ignore les paquets déjà présents) :
+   brew install git node jq tmux
+   git --version && node --version && jq --version && tmux -V
+
+3. Claude Code CLI :
+   command -v claude >/dev/null && echo '✓ claude déjà installé' || npm install -g @anthropic-ai/claude-code
+   claude --version
+
+4. Initialiser ~/.claude/ et ~/.claude/settings.json (préserver l'existant) :
+   mkdir -p ~/.claude
+   S=~/.claude/settings.json
+   [ ! -f "$S" ] && echo '{}' > "$S"
+   jq '. * {"model":"sonnet","language":"français"}' "$S" > /tmp/cc.json && mv /tmp/cc.json "$S"
+
+5. Comet browser : informer l'utilisateur qu'il doit le télécharger manuellement depuis https://www.comet.so puis glisser Comet.app dans /Applications. NE PAS lancer de commandes pour ça.
+
+6. Vérification finale :
+   ls /Applications/Comet.app 2>/dev/null && echo '✓ Comet présent' || echo '⚠️ Comet à installer manuellement'
+   jq '.model, .language' ~/.claude/settings.json
+   echo '✓ Module base prêt — peut continuer avec module Statusline ou RTK'
 
 Contraintes :
-- Ne pas écraser ~/.claude/settings.json s'il existe — utiliser jq pour merger.
-- Ne pas modifier ~/.zshrc sans demande explicite.
-- Vérifier chaque étape avant de passer à la suivante.
+- Ne JAMAIS écraser ~/.claude/settings.json (toujours merge avec jq).
+- Ne pas modifier ~/.zshrc dans ce module — c'est traité par d'autres modules (rtk, worktrees, claude-mem).
+- Vérifier le code retour de chaque étape avant de passer à la suivante.
+- Si l'utilisateur n'est pas sur macOS, adapter (apt-get / dnf / etc.) ou alerter.
   </script>
 
   <script type="text/x-code" id="prompt-rtk-content">
 Configure RTK (Rust Token Killer) et le hook de réécriture pour Claude Code.
 
-Repo officiel : https://github.com/PsychoLlama/rtk
+Repo officiel : https://github.com/rtk-ai/rtk
 
 Effectue les actions suivantes :
 
@@ -592,21 +719,65 @@ Contraintes :
   <script type="text/x-code" id="prompt-memory-claudemem-content">
 Configure claude-mem (capture automatique de mémoire de session) pour Claude Code.
 
+PRÉREQUIS : node + npm (module Installation de base) et jq.
+
 Effectue les actions suivantes :
 
-1. Installe claude-mem globalement : npm install -g claude-mem. Vérifie avec claude-mem --version.
-2. Initialise le stockage : claude-mem init --dir ~/.claude/claude-mem.
-3. Ajoute les alias dans ~/.zshrc (sans doublon) : cm-add='claude-mem add', cm-find='claude-mem search', cm-list='claude-mem list'.
-4. Ajoute dans ~/.claude/CLAUDE.md les directives pour Claude :
-   - Utiliser claude-mem search avant toute hypothèse sur une décision passée
+1. Installer claude-mem globalement :
+   npm install -g claude-mem
+   Vérifier : claude-mem --version
+
+2. Initialiser le stockage :
+   mkdir -p ~/.claude/claude-mem
+   claude-mem init --dir ~/.claude/claude-mem
+   → crée la base SQLite + l'index ChromaDB (recherche sémantique).
+
+3. Ajouter les alias shell dans ~/.zshrc (idempotent — vérifier absence avant append) :
+   ZRC=~/.zshrc
+   [ ! -f "$ZRC" ] && touch "$ZRC"
+   grep -q 'alias cm-add=' "$ZRC" || cat >> "$ZRC" <<'EOF'
+
+# claude-mem aliases
+alias cm-add='claude-mem add'
+alias cm-find='claude-mem search'
+alias cm-list='claude-mem list'
+alias cm-time='claude-mem timeline'
+EOF
+
+4. Activer la capture automatique via les hooks Claude Code (SessionStart + Stop + UserPromptSubmit). Deux scénarios :
+
+   SCÉNARIO A — claude-mem fournit son propre installateur :
+     claude-mem hooks install     # si la commande existe (claude-mem >= 2.x)
+     → installe automatiquement les hooks dans ~/.claude/settings.json.
+
+   SCÉNARIO B — installation manuelle des hooks (si l'installateur n'existe pas) :
+     S=~/.claude/settings.json
+     [ ! -f "$S" ] && echo '{}' > "$S"
+     for EVT in SessionStart Stop UserPromptSubmit; do
+       CMD="claude-mem hook $EVT"
+       jq --arg evt "$EVT" --arg cmd "$CMD" '
+         .hooks[$evt] = (((.hooks[$evt] // []) | map(select((.hooks // [{}])[0].command != $cmd))) + [{"hooks":[{"type":"command","command":$cmd,"timeout":5000,"async":true}]}])
+       ' "$S" > /tmp/cc.json && mv /tmp/cc.json "$S"
+     done
+   → Vérifier ensuite avec : jq '.hooks | keys' ~/.claude/settings.json
+
+5. Ajouter dans ~/.claude/CLAUDE.md les directives pour Claude (idempotent — grep avant append) :
+   - Utiliser claude-mem search AVANT toute hypothèse sur une décision passée
    - Utiliser claude-mem timeline pour retrouver l'historique d'une session
-   - Ne jamais écrire manuellement dans claude-mem (capture automatique via hooks)
-   - Utiliser claude-mem add uniquement pour les préférences stables explicites
-5. Vérifie que les hooks de capture automatique sont actifs.
+   - Ne jamais écrire manuellement dans claude-mem (capture automatique via les hooks SessionStart/Stop)
+   - Utiliser claude-mem add uniquement pour des préférences stables explicites
+   - Ne JAMAIS stocker de credentials ou tokens dans claude-mem (ils vont dans les fichiers curatés uniquement)
+
+6. Vérification finale :
+   claude-mem --version
+   ls ~/.claude/claude-mem/
+   jq '.hooks | to_entries | map(select(.value | tostring | contains("claude-mem"))) | .[].key' ~/.claude/settings.json
 
 Contraintes :
-- Ne pas modifier ~/.zshrc si les alias existent déjà (vérifier avec grep).
-- Préserver le dossier ~/.claude/claude-mem s'il existe.
+- Ne pas dupliquer les alias dans ~/.zshrc (grep avant append).
+- Préserver ~/.claude/claude-mem/ s'il existe (init est idempotent mais sauvegarder par précaution).
+- Le merge jq sur settings.json filtre les commandes existantes pour éviter les doublons.
+- Si claude-mem est installé via le plugin superpowers (cf. module Plugins), les hooks peuvent déjà être actifs — vérifier d'abord avec jq sur settings.json avant de les ajouter.
   </script>
 
   <script type="text/x-code" id="prompt-memory-coord-content">
@@ -661,33 +832,55 @@ Contraintes :
   </script>
 
   <script type="text/x-code" id="prompt-workflow-content">
-Configure le workflow de développement Claude Code avec superpowers, speckit et les quality gates.
+Configure le workflow de développement Claude Code complet : speckit, agents dédiés, /speckit-flow, agent teams, 8 quality gates.
 
-Effectue les actions suivantes :
+PRÉREQUIS : module Plugins fait (superpowers et codex installés via enabledPlugins).
 
-1. Vérifie que superpowers est installé :
-   ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/
-   Si absent, c'est que les plugins ne sont pas encore installés — faire d'abord le module Plugins.
+Effectue les actions suivantes dans l'ordre :
 
-2. Vérifie que speckit est accessible dans les skills superpowers :
+1. Vérifier la présence du skill speckit :
    ls ~/.claude/plugins/cache/claude-plugins-official/superpowers/skills/ | grep -i speckit
-   Si absent, relancer claude pour forcer la réinstallation.
+   → Si absent : relancer 'claude --version' pour forcer l'installation des plugins.
 
-3. Crée ou complète CLAUDE.md dans le répertoire courant avec la section Skill Priority :
-   - Pour tout nouveau développement : utiliser superpowers-speckit (remplace brainstorming+writing-plans)
-   - Le cycle : specify → clarify → plan → tasks → analyze → implement
+2. Mettre à jour ~/.claude/settings.json (merge jq, jamais écraser) :
+   S=~/.claude/settings.json
+   [ ! -f "$S" ] && echo '{}' > "$S"
+   jq '. * {"plansDirectory":"./reports"} | .env = ((.env // {}) * {"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS":"1"})' "$S" > /tmp/cc.json && mv /tmp/cc.json "$S"
+   → plansDirectory persiste les plans speckit dans ./reports/ du projet.
+   → CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 active les équipes de subagents.
+
+3. Ajouter la section "Skill Priority" dans ~/.claude/CLAUDE.md (idempotent — grep avant append) :
+   - Pour tout nouveau dev : utiliser superpowers-speckit au lieu de brainstorming/writing-plans
+   - Pour les features non-triviales (>1 fichier ou >30 min) : préférer /speckit-flow
    - Les autres skills superpowers restent actifs (TDD, debugging, worktrees, code-review, finishing-branch, verification)
 
-4. Ajoute la section "Quality Gates" dans CLAUDE.md :
-   Avant tout commit, dans l'ordre : /verification → /code-review → /simplify → /finishing
+4. Créer l'agent ~/.claude/agents/speckit-impl.md avec le contenu de src-speckit-impl du guide.
+   Frontmatter : model=opus, isolation=worktree, permissionMode=acceptEdits, skills préchargés (speckit, TDD, verification, refactoring), memory=project.
 
-5. Ajoute les alias dans ~/.zshrc (sans doublon) : gs='git status', gd='git diff', gl='git log --oneline -20'
+5. Créer l'agent ~/.claude/agents/test-validator.md avec le contenu de src-test-validator du guide.
+   Frontmatter : model=sonnet, tools read-only (Read, Bash, Glob, Grep), skills préchargés (systematic-debugging, verification).
 
-6. Documente dans CLAUDE.md quand invoquer /advisor (avant approche complexe, avant déclarer terminé, quand bloqué).
+6. Créer le slash command ~/.claude/commands/speckit-flow.md avec le contenu de src-speckit-flow du guide.
+   Orchestre : Research (Explore/Haiku) → Spec & Plan (skill speckit) → Implement (speckit-impl en worktree) → Quality gates.
+
+7. Ajouter la section "Quality Gates" dans ~/.claude/CLAUDE.md (idempotent) avec l'ordre strict des 8 gates :
+   1. /verification → 2. /simplify → 3. self-review → 4. /security-review (si auth/crypto/secrets/payment/upload/permissions/SQL) → 5. /codex:review → 6. receiving-code-review → 7. /code-review (si PR créée et diff >50 lignes) → 8. /finishing-branch
+
+8. Ajouter la section "Commit hygiene" dans CLAUDE.md :
+   - Aucun 'Co-Authored-By: Claude' ni 'Generated with Claude Code' dans commits/PR.
+   - L'utilisateur est l'unique auteur.
+
+9. Vérifier le résultat :
+   jq '.plansDirectory, .env' ~/.claude/settings.json
+   ls ~/.claude/agents/{speckit-impl,test-validator}.md
+   test -f ~/.claude/commands/speckit-flow.md
+   grep -E 'Skill Priority|Quality Gates|Commit hygiene' ~/.claude/CLAUDE.md
 
 Contraintes :
-- Ne pas modifier un CLAUDE.md existant au-delà des sections manquantes (append uniquement).
-- Préserver ~/.zshrc.
+- Toujours merger avec jq, jamais écraser settings.json.
+- CLAUDE.md : append uniquement (vérifier absence avec grep avant chaque ajout).
+- Ne pas créer ~/.claude/CLAUDE.md s'il n'existe pas — touch d'abord.
+- Les 3 fichiers (speckit-impl.md, test-validator.md, speckit-flow.md) doivent être créés à partir des src du guide — leur contenu est validé.
   </script>
 
   <script type="text/x-code" id="prompt-multiagents-content">
@@ -829,6 +1022,135 @@ Contraintes :
 - Demander le token Telegram à l'utilisateur avant d'écrire .env.
 - Ne jamais afficher le token dans la console.
 - chmod 600 sur .env obligatoire.
+  </script>
+
+  <script type="text/x-code" id="prompt-statusline-content">
+Configure la statusline custom de Claude Code.
+
+PRÉREQUIS : jq installé (brew install jq).
+
+Effectue les actions suivantes :
+
+1. Crée ~/.claude/statusline.sh avec le contenu de src-statusline du guide.
+   Le script doit commencer par #!/usr/bin/env bash et inclure `export LC_ALL=C` (sinon printf %.2f échoue avec LC_NUMERIC=fr_FR).
+
+2. Rends-le exécutable : chmod +x ~/.claude/statusline.sh.
+
+3. Test à sec avec un payload factice :
+   echo '{"model":{"display_name":"Sonnet"},"workspace":{"current_dir":"'$PWD'"},"context_window":{"used_percentage":42,"context_window_size":200000},"cost":{"total_cost_usd":1.23,"total_duration_ms":75000,"total_lines_added":12,"total_lines_removed":3}}' | ~/.claude/statusline.sh
+   → Doit afficher une ligne avec couleurs, ctx 42% [▓▓░░░] (200k), $1.23, 1m15s, +12 -3.
+
+4. Active dans ~/.claude/settings.json (merge jq, jamais écraser) :
+   S=~/.claude/settings.json
+   [ ! -f "$S" ] && echo '{}' > "$S"
+   jq --arg cmd "$HOME/.claude/statusline.sh" '.statusLine = {"type":"command","command":$cmd}' "$S" > /tmp/cc.json && mv /tmp/cc.json "$S"
+
+5. Vérifie : jq '.statusLine' ~/.claude/settings.json.
+
+6. Demande à l'utilisateur de relancer Claude Code pour voir la statusline en bas. Les champs 5h/7d ne s'affichent que sur abonnement Pro/Max.
+
+Contraintes :
+- Préserver settings.json existant (merge jq uniquement).
+- Sur macOS, utiliser ${var/#$HOME/~} sans backslash dans la substitution paramètre tilde.
+- C-style for loops (for ((i=0;i<N;i++))) plutôt que `seq` pour éviter le bug BSD seq sur macOS.
+  </script>
+
+  <script type="text/x-code" id="prompt-hooks-python-content">
+Configure le framework Python de hooks pour Claude Code (dispatcher centralisé + handlers + logs JSONL).
+
+PRÉREQUIS : python3 (>= 3.8) installé. Vérifier avec /usr/bin/python3 --version.
+
+Effectue les actions suivantes dans l'ordre :
+
+1. Créer la structure de dossiers :
+   mkdir -p ~/.claude/hooks/py/handlers ~/.claude/hooks/config ~/.claude/hooks/logs
+
+2. Créer ~/.claude/hooks/py/dispatcher.py avec le contenu de src-hooks-dispatcher du guide.
+   Le dispatcher lit stdin JSON, charge handlers.json, exécute les handlers, écrit décision sur stdout (PreToolUse/Stop uniquement).
+   Best-effort : exception → log + continue.
+
+3. Créer les 3 handlers de base à partir de src-hooks-handlers (le src contient 3 fichiers concaténés délimités par '### FILE:' markers) :
+   - ~/.claude/hooks/py/handlers/log_event.py
+   - ~/.claude/hooks/py/handlers/snapshot_session.py
+   - ~/.claude/hooks/py/handlers/notify_subagent.py
+
+4. Créer la config events → handlers :
+   cat > ~/.claude/hooks/config/handlers.json <<'EOF'
+   {
+     "PreCompact":      [{"name":"log_event"}, {"name":"snapshot_session"}],
+     "PostCompact":     [{"name":"log_event"}],
+     "TaskCompleted":   [{"name":"log_event"}],
+     "SubagentStop":    [{"name":"notify_subagent"}, {"name":"log_event"}],
+     "WorktreeCreate":  [{"name":"log_event"}],
+     "WorktreeRemove":  [{"name":"log_event"}]
+   }
+   EOF
+
+5. Déclarer chaque event dans ~/.claude/settings.json (merge jq idempotent) :
+   S=~/.claude/settings.json
+   [ ! -f "$S" ] && echo '{}' > "$S"
+   for EVT in PreCompact PostCompact TaskCompleted SubagentStop WorktreeCreate WorktreeRemove; do
+     CMD="/usr/bin/python3 $HOME/.claude/hooks/py/dispatcher.py --event=$EVT"
+     jq --arg evt "$EVT" --arg cmd "$CMD" '
+       .hooks[$evt] = (((.hooks[$evt] // []) | map(select((.hooks // [{}])[0].command != $cmd))) + [{"hooks":[{"type":"command","command":$cmd,"timeout":3000,"async":true}]}])
+     ' "$S" > /tmp/cc.json && mv /tmp/cc.json "$S"
+   done
+
+6. Vérifier :
+   python3 ~/.claude/hooks/py/dispatcher.py --event=Test < /dev/null   # doit retourner sans erreur
+   jq '.hooks | keys' ~/.claude/settings.json                          # doit lister les 6 events
+   ls ~/.claude/hooks/py/handlers/                                     # doit lister les 3 .py
+   ls ~/.claude/hooks/config/                                          # doit lister handlers.json
+
+Contraintes :
+- Toujours merger settings.json avec jq (jamais écraser). Le merge évite les doublons par filtrage de la commande.
+- Le PreToolUse Bash existant (RTK rewrite) doit être préservé — on n'ajoute que les 6 events Python.
+- Les logs s'accumulent dans ~/.claude/hooks/logs/ — ajouter à la rotation système si besoin.
+  </script>
+
+  <script type="text/x-code" id="prompt-worktrees-content">
+Configure les aliases shell pour worktrees parallèles (pattern Boris Cherny).
+
+PRÉREQUIS : git installé, ~/.zshrc présent (ou bash équivalent — adapter).
+
+Effectue les actions suivantes :
+
+1. ⚠️ AVANT TOUT : vérifier les collisions potentielles des aliases 1-lettre (m, f, a) avec le shell existant :
+   type m f a 2>&1
+   → Si l'un est déjà défini (fzf wrappers, alias man, complétions), avertir l'utilisateur et proposer de renommer en cc-m / cc-f / cc-a dans le fichier qui sera créé. Demander confirmation avant de continuer.
+
+2. Créer ~/.claude/aliases-worktrees.sh avec le contenu de src-aliases-worktrees du guide.
+   Le fichier expose : cwt, cwt-new, cwt-ls, cwt-rm (helpers worktree) + m, f, a (raccourcis claude) + alias gwt, gwtls.
+   Si conflit détecté à l'étape 1, renommer m → cc-m, f → cc-f, a → cc-a dans le fichier avant de continuer.
+
+3. Sourcer depuis ~/.zshrc (idempotent, vérifier absence avant append) :
+   ZRC=~/.zshrc
+   [ ! -f "$ZRC" ] && touch "$ZRC"
+   grep -q 'aliases-worktrees.sh' "$ZRC" || \
+     printf '\n[ -f "$HOME/.claude/aliases-worktrees.sh" ] && source "$HOME/.claude/aliases-worktrees.sh"\n' >> "$ZRC"
+
+4. Recharger pour la session courante : source ~/.claude/aliases-worktrees.sh
+
+5. Vérifier que les fonctions sont disponibles :
+   type cwt cwt-new >/dev/null 2>&1 && echo '✓ helpers cwt en place'
+   # Si m/f/a ont été renommés en cc-m/cc-f/cc-a, adapter ici.
+
+6. Test du flow complet (depuis un repo git, branche main propre) :
+   cwt-ls                              # liste actuelle
+   f test-worktrees                    # crée worktree dans ~/Dev/_worktrees/<repo>-test-worktrees + lance Claude
+   # (l'utilisateur teste, /exit dans Claude)
+   cwt-rm test-worktrees --with-branch # nettoyage
+
+7. Documenter dans ~/.claude/CLAUDE.md la convention :
+   - Worktrees stockés dans ~/Dev/_worktrees/<repo>-<branch>
+   - 3-5 max en parallèle
+   - UN worktree = UNE branche = UN sujet
+   - Combinable avec subagents `isolation: worktree` (ex: speckit-impl)
+
+Contraintes :
+- Ne pas dupliquer la ligne source dans ~/.zshrc (vérifier avec grep avant append).
+- Préserver le contenu existant de ~/.zshrc.
+- Le dossier ~/Dev/_worktrees/ est créé à la volée par cwt-new.
   </script>
 
   <script type="text/x-code" id="src-rtk-rewrite">
@@ -1203,6 +1525,732 @@ main() {
 }
 
 main "$@"
+  </script>
+
+  <script type="text/x-code" id="src-statusline">
+#!/usr/bin/env bash
+# ~/.claude/statusline.sh — Claude Code status line
+# Single-line, dense layout:
+# model · cwd · git-branch[*] · ctx XX% [▓▓░░░] · 5h XX% [▓░░░░] · 7d XX% [░░░░░] · $0.00 · Xs · +12 -3
+
+input=$(cat)
+
+# Force C locale so printf "%.2f" works regardless of user's LC_NUMERIC
+export LC_ALL=C
+
+# ── ANSI helpers ──────────────────────────────────────────────────────────────
+reset='\033[0m'
+bold='\033[1m'
+dim='\033[2m'
+cyan='\033[36m'
+green='\033[32m'
+yellow='\033[33m'
+blue='\033[34m'
+magenta='\033[35m'
+red='\033[31m'
+gray='\033[90m'
+sep="${dim} · ${reset}"
+
+# ── 1. Model ──────────────────────────────────────────────────────────────────
+model=$(echo "$input" | jq -r '.model.display_name // empty')
+
+# ── 2. CWD (abbreviated with ~) ───────────────────────────────────────────────
+cwd_raw=$(echo "$input" | jq -r '.workspace.current_dir // empty')
+cwd="${cwd_raw/#$HOME/~}"
+
+# ── 2b. Project dir (show only when differs from cwd) ─────────────────────────
+proj_dir=$(echo "$input" | jq -r '.workspace.project_dir // empty')
+proj_part=""
+if [ -n "$proj_dir" ] && [ "$proj_dir" != "$cwd_raw" ]; then
+  proj_part="proj: $(basename "$proj_dir")"
+fi
+
+# ── 3. Git branch + dirty indicator ───────────────────────────────────────────
+git_part=""
+if [ -n "$cwd_raw" ] && git --no-optional-locks -C "$cwd_raw" rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
+  branch=$(git --no-optional-locks -C "$cwd_raw" symbolic-ref --short HEAD 2>/dev/null \
+           || git --no-optional-locks -C "$cwd_raw" rev-parse --short HEAD 2>/dev/null)
+  dirty=""
+  if ! git --no-optional-locks -C "$cwd_raw" diff --quiet 2>/dev/null \
+     || ! git --no-optional-locks -C "$cwd_raw" diff --cached --quiet 2>/dev/null; then
+    dirty="*"
+  fi
+  [ -n "$branch" ] && git_part="${branch}${dirty}"
+fi
+
+# ── Bar helper: render a 5-cell ▓/░ bar for a given percentage (0-100) ────────
+make_bar() {
+  local pct_int="$1"
+  local filled=$(( pct_int / 20 ))
+  [ $filled -gt 5 ] && filled=5
+  local empty=$(( 5 - filled ))
+  local bar=""
+  local i
+  for ((i=0; i<filled; i++)); do bar="${bar}▓"; done
+  for ((i=0; i<empty;  i++)); do bar="${bar}░"; done
+  printf '%s' "$bar"
+}
+
+# ── 4. Context % + visual bar + size ──────────────────────────────────────────
+ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // .cost.context_window_percentage // empty')
+ctx_part=""
+if [ -n "$ctx_pct" ]; then
+  pct_int=$(printf '%.0f' "$ctx_pct")
+  bar=$(make_bar "$pct_int")
+  ctx_size_raw=$(echo "$input" | jq -r '.context_window.context_window_size // empty')
+  ctx_size_str=""
+  if [ -n "$ctx_size_raw" ] && [ "$ctx_size_raw" != "null" ]; then
+    if [ "$ctx_size_raw" -ge 1000000 ] 2>/dev/null; then
+      ctx_size_str="$(( ctx_size_raw / 1000000 ))M"
+    elif [ "$ctx_size_raw" -ge 1000 ] 2>/dev/null; then
+      ctx_size_str="$(( ctx_size_raw / 1000 ))k"
+    else
+      ctx_size_str="$ctx_size_raw"
+    fi
+  fi
+  if [ -n "$ctx_size_str" ]; then
+    ctx_part="ctx ${pct_int}% [${bar}] (${ctx_size_str})"
+  else
+    ctx_part="ctx ${pct_int}% [${bar}]"
+  fi
+fi
+
+# ── 5. 5h rate-limit % + visual bar (Pro/Max only) ───────────────────────────
+five_h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+five_part=""
+if [ -n "$five_h" ]; then
+  five_int=$(printf '%.0f' "$five_h")
+  bar=$(make_bar "$five_int")
+  five_part="5h ${five_int}% [${bar}]"
+fi
+
+# ── 6. 7d rate-limit % + visual bar (Pro/Max only) ───────────────────────────
+seven_d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+seven_part=""
+if [ -n "$seven_d" ]; then
+  seven_int=$(printf '%.0f' "$seven_d")
+  bar=$(make_bar "$seven_int")
+  seven_part="7d ${seven_int}% [${bar}]"
+fi
+
+# ── 7. Cost ───────────────────────────────────────────────────────────────────
+cost_raw=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
+cost_part=""
+if [ -n "$cost_raw" ]; then
+  cost_part=$(printf '$%.2f' "$cost_raw")
+fi
+
+# ── 8. Duration ───────────────────────────────────────────────────────────────
+dur_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
+dur_part=""
+if [ -n "$dur_ms" ]; then
+  dur_s=$(( ${dur_ms%.*} / 1000 ))
+  if [ "$dur_s" -lt 60 ]; then
+    dur_part="${dur_s}s"
+  else
+    dur_m=$(( dur_s / 60 ))
+    dur_rem=$(( dur_s % 60 ))
+    if [ "$dur_rem" -eq 0 ]; then
+      dur_part="${dur_m}m"
+    else
+      dur_part="${dur_m}m${dur_rem}s"
+    fi
+  fi
+fi
+
+# ── 9. Delta lines ────────────────────────────────────────────────────────────
+lines_added=$(echo "$input" | jq -r '.cost.total_lines_added // empty')
+lines_removed=$(echo "$input" | jq -r '.cost.total_lines_removed // empty')
+lines_part=""
+if [ -n "$lines_added" ] || [ -n "$lines_removed" ]; then
+  la=${lines_added:-0}
+  lr=${lines_removed:-0}
+  lines_part="+${la} -${lr}"
+fi
+
+# ── Assemble ──────────────────────────────────────────────────────────────────
+out=""
+
+append() {
+  local color="$1" text="$2"
+  if [ -n "$text" ]; then
+    [ -n "$out" ] && out="${out}${sep}"
+    out="${out}${color}${text}${reset}"
+  fi
+}
+
+append "${cyan}${bold}"  "$model"
+append "${blue}"         "$cwd"
+append "${gray}"         "$proj_part"
+append "${green}"        "$git_part"
+append "${yellow}"       "$ctx_part"
+append "${magenta}"      "$five_part"
+append "${red}"          "$seven_part"
+append "${green}"        "$cost_part"
+append "${dim}"          "$dur_part"
+append "${cyan}"         "$lines_part"
+
+printf "%b\n" "$out"
+  </script>
+
+  <script type="text/x-code" id="src-hooks-dispatcher">
+#!/usr/bin/env python3
+"""
+Claude Code hooks dispatcher.
+
+Lit un payload JSON sur stdin, charge la config (~/.claude/hooks/config/handlers.json
++ override .local.json), trouve les handlers déclarés pour l'event, les exécute,
+et écrit éventuellement une réponse JSON sur stdout.
+
+Usage (depuis settings.json hooks) :
+  python3 ~/.claude/hooks/py/dispatcher.py --event=PreCompact
+
+Conventions handler:
+- Fonction Python dans ~/.claude/hooks/py/handlers/<name>.py exposant
+  `handle(payload: dict) -> dict | None`.
+- handle() retourne None pour silence ou un dict {"action": "block"|"continue", ...}
+  pour signaler une décision à Claude Code (PreToolUse/Stop seulement).
+
+Tous les handlers sont best-effort : exception → log + continue (jamais bloquer
+silencieusement le runtime).
+"""
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import logging
+import os
+import sys
+import traceback
+from datetime import datetime
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+HOOKS_ROOT = ROOT.parent
+CONFIG_DIR = HOOKS_ROOT / "config"
+HANDLERS_DIR = ROOT / "handlers"
+LOG_DIR = HOOKS_ROOT / "logs"
+
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+HANDLERS_DIR.mkdir(parents=True, exist_ok=True)
+
+logging.basicConfig(
+    filename=LOG_DIR / "dispatcher.log",
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+log = logging.getLogger("hooks-dispatcher")
+
+
+def load_config() -> dict:
+    """Merge handlers.json (shared) + handlers.local.json (perso, git-ignored)."""
+    shared = CONFIG_DIR / "handlers.json"
+    local = CONFIG_DIR / "handlers.local.json"
+    merged: dict = {}
+    for path in (shared, local):
+        if not path.exists():
+            continue
+        try:
+            with path.open("r", encoding="utf-8") as fh:
+                data = json.load(fh)
+                for event, handlers in data.items():
+                    merged.setdefault(event, []).extend(handlers)
+        except Exception as exc:
+            log.warning("config %s invalide : %s", path.name, exc)
+    return merged
+
+
+def load_handler(name: str):
+    """Charge dynamiquement handlers/<name>.py et renvoie sa fonction handle()."""
+    path = HANDLERS_DIR / f"{name}.py"
+    if not path.exists():
+        log.warning("handler %s introuvable (%s)", name, path)
+        return None
+    try:
+        spec = importlib.util.spec_from_file_location(f"handlers.{name}", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)  # type: ignore[union-attr]
+        return getattr(module, "handle", None)
+    except Exception as exc:
+        log.error("import handler %s : %s", name, exc)
+        log.debug(traceback.format_exc())
+        return None
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--event", required=True, help="Hook event name")
+    args = parser.parse_args()
+    event = args.event
+
+    raw = sys.stdin.read()
+    try:
+        payload = json.loads(raw) if raw.strip() else {}
+    except json.JSONDecodeError:
+        log.warning("payload non-JSON sur %s : %r", event, raw[:200])
+        payload = {"raw": raw}
+
+    payload["_event"] = event
+    payload["_ts"] = datetime.utcnow().isoformat() + "Z"
+
+    config = load_config()
+    handlers = config.get(event, [])
+    if not handlers:
+        log.info("event=%s aucun handler déclaré", event)
+        return 0
+
+    log.info("event=%s handlers=%d", event, len(handlers))
+
+    decision: dict | None = None
+    for entry in handlers:
+        name = entry.get("name") if isinstance(entry, dict) else entry
+        if not name:
+            continue
+        fn = load_handler(name)
+        if fn is None:
+            continue
+        try:
+            result = fn(payload)
+            if isinstance(result, dict) and event in {"PreToolUse", "Stop"}:
+                decision = result
+        except Exception as exc:
+            log.error("handler %s a levé %s", name, exc)
+            log.debug(traceback.format_exc())
+
+    if decision is not None:
+        json.dump(decision, sys.stdout)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+  </script>
+
+  <script type="text/x-code" id="src-hooks-handlers">
+### FILE: ~/.claude/hooks/py/handlers/log_event.py ###
+"""Handler générique : log JSONL append-only."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+LOG_DIR = Path(__file__).resolve().parents[2] / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def handle(payload: dict) -> None:
+    event = payload.get("_event", "unknown")
+    line = json.dumps(payload, ensure_ascii=False, default=str)
+    log_path = LOG_DIR / f"{event}.jsonl"
+    with log_path.open("a", encoding="utf-8") as fh:
+        fh.write(line + "\n")
+
+
+### FILE: ~/.claude/hooks/py/handlers/snapshot_session.py ###
+"""PreCompact handler : sauvegarde un snapshot de la session avant compaction.
+
+Stocke transcript_path + cwd + ts dans ~/.claude/hooks/logs/snapshots/.
+Permet de retrouver le contexte d'une session compactée si nécessaire.
+"""
+from __future__ import annotations
+
+import json
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+SNAP_DIR = Path(__file__).resolve().parents[2] / "logs" / "snapshots"
+SNAP_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def handle(payload: dict) -> None:
+    ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    snap = SNAP_DIR / f"snap_{ts}.json"
+    transcript = payload.get("transcript_path") or payload.get("transcriptPath")
+
+    summary = {
+        "ts": ts,
+        "event": payload.get("_event"),
+        "cwd": payload.get("cwd") or payload.get("workspace", {}).get("current_dir"),
+        "transcript_path": transcript,
+        "session_id": payload.get("session_id"),
+        "model": payload.get("model"),
+    }
+    snap.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    if transcript:
+        try:
+            src = Path(transcript)
+            if src.exists():
+                shutil.copy2(src, SNAP_DIR / f"transcript_{ts}.jsonl")
+        except Exception:
+            pass
+
+
+### FILE: ~/.claude/hooks/py/handlers/notify_subagent.py ###
+"""SubagentStop handler : notifie discrètement quand un subagent termine.
+
+Bell terminal uniquement (pas de macOS notification pour éviter le spam si
+plusieurs subagents en parallèle). Log également pour audit.
+"""
+from __future__ import annotations
+
+import sys
+
+
+def handle(payload: dict) -> None:
+    name = (
+        payload.get("subagent_type")
+        or payload.get("subagent_name")
+        or payload.get("agent")
+        or "subagent"
+    )
+    sys.stderr.write(f"\a[subagent:{name}] done\n")
+    sys.stderr.flush()
+  </script>
+
+  <script type="text/x-code" id="src-aliases-worktrees">
+#!/usr/bin/env zsh
+# Aliases worktrees Claude Code
+# Source ce fichier depuis ~/.zshrc :
+#   [ -f "$HOME/.claude/aliases-worktrees.sh" ] && source "$HOME/.claude/aliases-worktrees.sh"
+#
+# Pattern Boris Cherny : 3-5 worktrees parallèles = "biggest productivity unlock".
+# Chaque worktree = un Claude Code dédié avec scope réduit, pas de /compact nécessaire.
+
+# ────────────────────────────────────────────────────────────
+# Helpers de base
+# ────────────────────────────────────────────────────────────
+
+# Ouvre un worktree existant (ou erreur si absent).
+# Usage : cwt <branch>
+cwt() {
+  local branch="$1"
+  if [[ -z "$branch" ]]; then
+    echo "Usage: cwt <branch>" >&2
+    return 1
+  fi
+  local repo_root
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "cwt: pas dans un repo git" >&2
+    return 1
+  }
+  local repo_name
+  repo_name="$(basename "$repo_root")"
+  local wt_path="$HOME/Dev/_worktrees/${repo_name}-${branch}"
+  if [[ ! -d "$wt_path" ]]; then
+    echo "cwt: worktree introuvable : $wt_path" >&2
+    echo "→ créer via : cwt-new $branch" >&2
+    return 1
+  fi
+  cd "$wt_path"
+}
+
+# Crée un nouveau worktree (branch déjà existante ou nouvelle) et y entre.
+# Usage : cwt-new <branch> [base-branch]
+cwt-new() {
+  local branch="$1"
+  local base="${2:-main}"
+  if [[ -z "$branch" ]]; then
+    echo "Usage: cwt-new <branch> [base-branch]" >&2
+    return 1
+  fi
+  local repo_root
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "cwt-new: pas dans un repo git" >&2
+    return 1
+  }
+  local repo_name
+  repo_name="$(basename "$repo_root")"
+  local wt_dir="$HOME/Dev/_worktrees"
+  local wt_path="$wt_dir/${repo_name}-${branch}"
+  mkdir -p "$wt_dir"
+  if git show-ref --verify --quiet "refs/heads/${branch}"; then
+    git worktree add "$wt_path" "$branch"
+  else
+    git worktree add -b "$branch" "$wt_path" "$base"
+  fi
+  cd "$wt_path"
+}
+
+# Liste les worktrees du repo courant.
+cwt-ls() {
+  git worktree list 2>/dev/null || echo "cwt-ls: pas dans un repo git" >&2
+}
+
+# Supprime un worktree (et sa branche optionnellement).
+# Usage : cwt-rm <branch> [--with-branch]
+cwt-rm() {
+  local branch="$1"
+  local with_branch="$2"
+  if [[ -z "$branch" ]]; then
+    echo "Usage: cwt-rm <branch> [--with-branch]" >&2
+    return 1
+  fi
+  local repo_root
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
+  local repo_name
+  repo_name="$(basename "$repo_root")"
+  local wt_path="$HOME/Dev/_worktrees/${repo_name}-${branch}"
+  git worktree remove "$wt_path" || git worktree remove --force "$wt_path"
+  if [[ "$with_branch" == "--with-branch" ]]; then
+    git branch -D "$branch"
+  fi
+}
+
+# ────────────────────────────────────────────────────────────
+# Lancement Claude Code dans un worktree (3 raccourcis Boris-style)
+# ────────────────────────────────────────────────────────────
+
+# m = main : ouvrir un Claude dans le repo principal (pas worktree).
+m() {
+  local repo_root
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "m: pas dans un repo git" >&2
+    return 1
+  }
+  cd "$repo_root" && claude "$@"
+}
+
+# f = feature : ouvrir/créer un worktree pour une branche feature et y lancer Claude.
+# Usage : f <branch> [args claude]
+f() {
+  local branch="$1"
+  shift
+  if [[ -z "$branch" ]]; then
+    echo "Usage: f <branch-name>" >&2
+    return 1
+  fi
+  cwt-new "$branch" 2>/dev/null || cwt "$branch" || return 1
+  claude "$@"
+}
+
+# a = analysis : worktree dédié à l'exploration/analyse en read-only.
+# Usage : a [args claude] (worktree ${repo}-analysis fixé)
+a() {
+  cwt-new analysis 2>/dev/null || cwt analysis || return 1
+  claude "$@"
+}
+
+# ────────────────────────────────────────────────────────────
+# Aliases courts
+# ────────────────────────────────────────────────────────────
+
+alias gwt='git worktree'
+alias gwtls='git worktree list'
+  </script>
+
+  <script type="text/x-code" id="src-speckit-impl">
+---
+name: speckit-impl
+description: Use PROACTIVELY pour exécuter la phase 'implement' du workflow spec-kit. Subagent dédié avec TDD strict, isolation worktree, modèle Opus. Précharge speckit-implement, test-driven-development, verification-before-completion. Invoque-le après speckit-tasks quand le plan est validé et qu'il faut produire le code.
+tools: Read, Write, Edit, Bash, Glob, Grep, Skill, Agent, WebFetch
+model: opus
+permissionMode: acceptEdits
+maxTurns: 50
+skills: ["superpowers-speckit", "superpowers:test-driven-development", "superpowers:verification-before-completion", "refactoring-skill"]
+memory: project
+isolation: worktree
+effort: high
+color: cyan
+---
+
+# speckit-impl — Implementer phase Spec-Kit
+
+## Mission
+
+Tu es le subagent d'implémentation pour le workflow **spec-kit**. Tu reçois en entrée :
+- Une feature avec ses artefacts spec-kit déjà produits (`spec.md`, `plan.md`, `tasks.md`, optionnellement `analyze.md`).
+- Un répertoire de travail (worktree git isolé, créé automatiquement via `isolation: worktree`).
+
+## Discipline
+
+1. **TDD strict** : pour chaque tâche du `tasks.md`, écris le test EN PREMIER, lance-le pour qu'il échoue, puis implémente le minimum pour le faire passer. Ne jamais écrire de code sans test préalable. Skill `superpowers:test-driven-development` est préchargé.
+
+2. **Verification-before-completion** : ne jamais déclarer une tâche terminée sans :
+   - Avoir lancé les tests et constaté qu'ils passent (output réel, pas inférence).
+   - Avoir lancé le linter / type-checker.
+   - Avoir lancé un build clean si applicable.
+   Skill `superpowers:verification-before-completion` est préchargé.
+
+3. **Quality gates** avant de rendre la main, dans l'ordre : verification → simplify → self-review → /security-review (si auth/crypto/secrets/payment/upload/permissions/SQL) → /codex:review → receiving-code-review → /code-review (si PR avec diff >50 lignes) → finishing-branch.
+
+4. **Pas de Co-Authored-By Claude** dans les commits ni les PR. L'utilisateur est l'unique auteur.
+
+5. **Contexte** : tu opères dans un worktree isolé. Le contexte parent t'a donné la spec ; tu n'as pas besoin de relire l'historique global. Si tu manques d'info, demande à l'utilisateur via une question ciblée plutôt que d'explorer toute la codebase.
+
+## Pattern d'exécution
+
+```
+1. Read spec.md + plan.md + tasks.md
+2. Pour chaque task numérotée dans tasks.md :
+   a. Read le test target (ou les fichiers à modifier)
+   b. Écrire le test (Red)
+   c. Implémenter (Green)
+   d. Refactor si nécessaire (Refactor) — skill `refactoring-skill` disponible
+   e. Lancer les tests + lint + build → vérifier output réel
+   f. Marquer task done dans tasks.md (avec un X dans la checkbox)
+3. Une fois toutes les tasks faites, lancer quality gates dans l'ordre.
+4. Reporter à l'utilisateur : ce qui a été fait, ce qui reste, les décisions techniques prises (5-10 lignes max).
+```
+
+## Outils délégués
+
+- Tests qui échouent de façon inexpliquée → `Agent(subagent_type="test-validator", ...)` pour diagnostic isolé.
+- Recherche large dans codebase → `Agent(subagent_type="Explore", ...)`.
+- Review fin de chantier → skill `superpowers:requesting-code-review`.
+
+## Communication
+
+- **Pas de narration** : faire le travail, reporter à la fin.
+- **Update intermédiaire** uniquement si : blocage > 5 min, décision technique non-évidente, scope creep détecté.
+- **Final report** : 5-10 lignes max, structure : "fait / restant / décisions / artefacts produits".
+  </script>
+
+  <script type="text/x-code" id="src-test-validator">
+---
+name: test-validator
+description: Use PROACTIVELY pour diagnostiquer pourquoi un test échoue, ou pour valider qu'une suite de tests passe vraiment (pas inférence). Subagent isolé en mode read-only + bash test runner. Utile depuis speckit-impl quand un test échoue de façon inattendue ou avant de déclarer une tâche done.
+tools: Read, Bash, Glob, Grep
+model: sonnet
+permissionMode: default
+maxTurns: 15
+skills: ["superpowers:systematic-debugging", "superpowers:verification-before-completion"]
+memory: project
+effort: medium
+color: yellow
+---
+
+# test-validator — Validation et diagnostic de tests
+
+## Mission
+
+Tu es un subagent spécialisé dans deux tâches liées :
+1. **Validation** : confirmer qu'une suite de tests passe vraiment, en lançant les commandes et en lisant l'output réel (pas en inférant à partir du code).
+2. **Diagnostic** : quand un test échoue de façon inattendue, identifier la cause racine (test mal écrit, bug réel, env, flakiness) et reporter un diagnostic actionnable.
+
+## Discipline
+
+- **Evidence before assertion** : ne jamais affirmer "les tests passent" sans avoir lancé la commande et constaté le code retour 0 + output positif. Skill `superpowers:verification-before-completion` préchargé.
+- **Systematic debugging** : pour les échecs, suivre la méthode root-cause. Pas de bandaids. Skill `superpowers:systematic-debugging` préchargé.
+- **Read-only sur le code applicatif** : tu n'as ni Write ni Edit. Si une correction est nécessaire, reporter au caller (speckit-impl ou l'utilisateur directement) avec localisation précise (fichier:ligne).
+
+## Pattern d'exécution
+
+### Mode validation
+```
+1. Lire le projet : package.json / pyproject.toml / Cargo.toml / etc. pour identifier le test runner.
+2. Lancer la commande de test (npm test, pytest, cargo test, etc.) avec output complet.
+3. Vérifier code retour + parser output : succès / échecs / skipped.
+4. Reporter : "X tests passed, Y failed, Z skipped. [détails échecs si Y>0]"
+```
+
+### Mode diagnostic
+```
+1. Lire le test qui échoue.
+2. Lire le code testé.
+3. Lancer le test en isolation avec verbose / debug si possible.
+4. Hypothèses : bug réel? Test mal écrit? Env? Flakiness? Dépendance manquante?
+5. Vérifier chaque hypothèse avec une commande/lecture.
+6. Reporter cause racine + correction proposée (sans la coder, juste localisation + description).
+```
+
+## Outils délégués
+
+- Si la cause semble être un environnement cassé → reporter au caller, ne pas tenter de réparer.
+- Si la cause est une vraie régression d'une feature ancienne → reporter au caller avec lien vers le commit suspect (`git blame`).
+
+## Communication
+
+- **Format strict** : "✅ PASSING" ou "❌ FAILING" en première ligne.
+- Suivi : 5-15 lignes max avec les chiffres + diagnostics.
+- Pas de narration de tes étapes — juste les résultats.
+  </script>
+
+  <script type="text/x-code" id="src-speckit-flow">
+---
+name: speckit-flow
+description: Orchestre le workflow complet spec-kit pour une feature : Research (Haiku read-only) → Spec & Plan (skill speckit) → Implement (speckit-impl/Opus en worktree) → Quality gates automatiques
+allowed-tools: Agent, Bash, Read
+---
+
+# /speckit-flow — Workflow spec-kit orchestré
+
+Commande d'entrée pour lancer un cycle spec-kit complet avec séparation stricte des phases.
+
+## Pattern : Command → Agent(research) → Agent(speckit-impl) → Quality gates
+
+### Étape 0 — Capturer la demande
+
+Si $ARGUMENTS est vide, demander à l'utilisateur :
+- Quelle feature / tâche ?
+- Dans quel projet / dossier ?
+- Y a-t-il déjà une spec ou un ticket de référence ?
+
+### Étape 1 — Research Agent (Haiku, read-only)
+
+Lancer un Agent avec :
+- `subagent_type: "Explore"`
+- `model: haiku`
+- Prompt : explorer le codebase pour la feature demandée. Identifier :
+  - Les fichiers à modifier (anchors)
+  - Les patterns existants à suivre
+  - Les dépendances et contraintes techniques
+  - Les tests existants dans le périmètre
+- Retourner un rapport concis : anchors, patterns, contraintes, surface de test.
+
+### Étape 2 — Spec & Plan (dans la conversation courante)
+
+À partir du rapport research :
+1. Invoquer le skill `superpowers-speckit` pour passer par les phases specify → clarify → plan → tasks → analyze.
+2. Le plan généré est sauvegardé dans `./reports/` (plansDirectory configuré).
+3. Valider le plan avec l'utilisateur avant de continuer.
+
+### Étape 3 — Implement Agent (speckit-impl, Opus, worktree isolé)
+
+Une fois le plan validé, lancer l'agent `speckit-impl` :
+
+```
+Agent({
+  subagent_type: "speckit-impl",
+  description: "Implémentation feature via speckit-impl",
+  isolation: "worktree",
+  model: "opus",
+  prompt: `
+    Plan à implémenter :
+    [insérer le plan des reports/]
+
+    Règles strictes :
+    1. TDD : tests avant code
+    2. Commits atomiques par tâche du plan
+    3. Vérification après chaque tâche (test-validator si échec)
+    4. Rapport final : tâches ✅/❌, fichiers modifiés, tests passants
+  `
+})
+```
+
+### Étape 4 — Quality Gates automatiques
+
+Après retour de speckit-impl, exécuter dans l'ordre :
+
+1. **verification** : skill `superpowers:verification-before-completion`
+2. **simplify** : vérifier qu'aucune abstraction inutile n'a été introduite
+3. **self-review** : relire le diff complet
+4. **security-review** (conditionnel) : si auth/crypto/SQL/secrets/upload/permissions touchés → `/security-review`
+5. **codex review** : `/codex:review`
+6. **receiving-code-review** : appliquer le feedback du review
+7. **code-review** (conditionnel) : si PR créée et diff >50 lignes → `/code-review`
+8. **finishing-branch** : `/finishing-branch`
+
+### Étape 5 — Rapport final
+
+Résumer pour l'utilisateur :
+- Tâches implémentées
+- Tests ajoutés
+- Gates passés
+- PR / branche créée
+- Lien vers le plan dans `./reports/`
   </script>
 
 
